@@ -8,6 +8,7 @@
 
 ## Description
 
+![Pwuca Diagram](./src/img/pwuca-diagram-0.1.png)
 A word game derived from the classic game [Ghost](https://en.wikipedia.org/wiki/Ghost_(game)).  Base MVP as of this writing is to make it playable on a local machine with players taking turns at the keyboard and words checked against an API, end goal is to have online play and lobbies.  This game which gave teen me such pedantic delight will finally be able to take its mischief onto the internet.
 
 #### Rules
