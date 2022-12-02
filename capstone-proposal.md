@@ -20,3 +20,21 @@
 * If any player is convinced that the most recently played letter created a fragment that *is not* a part of any existing word, any individual player can challenge the player who played the last letter and that player will be prompted to input a word that includes said fragment.  If said word *is* a word according to the (Free Dictionary API)[http://dictionaryapi.dev], the player who challenged will receive a PWUCA.  If it *is not*, the player who last played a letter will receive a PWUCA instead.  In both cases, the current fragment will be cleared and the next round will begin.
 * Once the fragment reaches four or more letters any fragment will be automatically searched on the dictionary api; if a word with a definintion comes back the player who played the word-completing letter gains a PWUCA, the word is cleared and the next round begins.
 
+#### Tools/Languages/Libraries To Be Used:
+
+* React
+* HTML
+* CSS
+* JavaScript
+* Free Dictionary API
+
+#### Further Development:
+
+* Online Multiplayer, either with registered users and the ability to find other users and create games that take in users queued as looking for games automatically and/or creation of lobby codes that will relate to rooms which you can invite friends without registration needed (similar to games such as drawful, etc.)
+* Points/tokens which allow users to manipulate the word fragment in other powerful ways.  Limited in use to prevent it getting too chaotic.
+
+#### Necessary Tools/Libraries for further development:
+
+* Something to manage lobbies, communication between users and interaction with the game, and other social aspects.  Currently looking into Yjs, open to using different solutions.
+* If I go the route of using authentication, etc; something to manage such/users themselves.  Looking into NextAuth.js
+
