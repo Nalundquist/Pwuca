@@ -4,3 +4,6 @@
 
 * 10:30am: Late start, looking up irish folklore names and spellings for terms related to pwuca, make react repo.
 * 11:45am: Begin reading resources on lobby-based multiplayer games in react 
+* 2:00pm: Further research into irish mythology and terms as well as other ways of handling listening to multiple users for response, in particular socket.IO.  Possible quote to use on load graphic for ghost-y vibes: 
+	"You are new here, I think.
+		Many years ago I used to live in this house..."
