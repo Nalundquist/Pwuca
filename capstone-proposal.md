@@ -32,9 +32,11 @@
 
 * Online Multiplayer, either with registered users and the ability to find other users and create games that take in users queued as looking for games automatically and/or creation of lobby codes that will relate to rooms which you can invite friends without registration needed (similar to games such as drawful, etc.)
 * Points/tokens which allow users to manipulate the word fragment in other powerful ways.  Limited in use to prevent it getting too chaotic.
+* Support for other languages as an expanded goal 
 
 #### Necessary Tools/Libraries for further development:
 
 * Something to manage lobbies, communication between users and interaction with the game, and other social aspects.  Currently looking into Yjs, open to using different solutions.
 * If I go the route of using authentication, etc; something to manage such/users themselves.  Looking into NextAuth.js
+* As far as support for more languages goes I would need a completely different dictionary API (and more than passing familiarity with a language other than English).  Collaboration with other developers would definitely be necessary.
 
