@@ -20,3 +20,5 @@ function StartPage(){
 	</React.Fragment>
 	)
 }
+
+export default StatePage;
