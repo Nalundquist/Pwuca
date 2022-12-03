@@ -1,3 +1,6 @@
+import React from 'react'
+// import '../index.css'
+
 function StartPage(){
 	const startStyle = {
 		postion: 'absolute',
@@ -7,12 +10,12 @@ function StartPage(){
 	}
 	return(
 	<React.Fragment>
-		<div class={startStyle}>
-			<div class='titlefade'>
+		<div style={startStyle}>
+			<div id='titlefade'>
 				<p>"You are new here,</p><p> I think.<hr/></p>
 				<p>Many years ago</p><p>I used to live in this house...</p>	
 			</div>
-			<div class='newgamebox'>
+			<div id='newgamebox'>
 				<p>An Amusement?</p>
 				<button>Yes</button>
 			</div>
@@ -21,4 +24,4 @@ function StartPage(){
 	)
 }
 
-export default StatePage;
+export default StartPage;

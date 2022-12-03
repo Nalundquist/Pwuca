@@ -21,7 +21,7 @@ code {
 
 #titlefade p{
   opacity: 0;
-  animation: titlefadekey 2s forwards;
+  animation: titlefadekey 5s forwards;
 }
 
 @keyframes titlefadekey{
@@ -34,15 +34,15 @@ code {
 }
 
 #titlefade p:nth-child(2){
-  animation-delay: 1.5s;
+  animation-delay: 3.5s;
 }
 
 #titlefade p:nth-child(3){
-  animation-delay: 2s;
+  animation-delay: 5s;
 }
 
 #titlefade p:nth-child(4){
-  animation-delay: 2.75s;
+  animation-delay: 7.75s;
 }
 
 @keyframes newgamekey{
@@ -53,9 +53,12 @@ code {
 #newgamebox{
   opacity: 0;
   animation: newgamekey 1.5s forwards;
-  animation-delay: 4s;
+  animation-delay: 11s;
   padding: 10px;
   margin: 15px;
+  width: 25%;
+  position: relative;
+  left: 35%;
   border: 2px solid brown;
   text-align: center;
 }

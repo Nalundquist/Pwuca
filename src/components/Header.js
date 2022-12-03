@@ -6,7 +6,7 @@ function Header(){
 		padding: '25px'
 	}
 	return(
-		<div class={headerStyle}>
+		<div style={headerStyle}>
 			<h2>PWUCA</h2>
 		</div>
 	)

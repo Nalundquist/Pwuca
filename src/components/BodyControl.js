@@ -6,7 +6,7 @@ function BodyControl(){
 	}
 
 	return(
-		<div class={bodyStyle}>
+		<div style={bodyStyle}>
 			<StartPage />
 		</div>
 	)
