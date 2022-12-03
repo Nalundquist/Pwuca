@@ -54,4 +54,8 @@ code {
   opacity: 0;
   animation: newgamekey 1.5s forwards;
   animation-delay: 4s;
+  padding: 10px;
+  margin: 15px;
+  border: 2px solid brown;
+  text-align: center;
 }
