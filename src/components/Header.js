@@ -3,7 +3,8 @@ function Header(){
 		borderBottom: '3px solid brown',
 		width: '100%',
 		height: '10vh',
-		padding: '25px'
+		padding: '25px',
+		color: 'brown'
 	}
 	return(
 		<div style={headerStyle}>
