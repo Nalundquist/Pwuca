@@ -1,7 +1,7 @@
-import React from 'react'
-// import '../index.css'
+import React from 'react';
+import PropTypes from 'prop-types';
 
-function StartPage(){
+function StartPage(props){
 	const startStyle = {
 		postion: 'absolute',
 		top: '35%',
@@ -17,11 +17,15 @@ function StartPage(){
 			</div>
 			<div id='newgamebox'>
 				<p>An Amusement?</p>
-				<button>Yes</button>
+				<button onClick={props.newGameOnClick}>Yes</button>
 			</div>
 		</div>
 	</React.Fragment>
 	)
+}
+
+StartPage.propTypes = {
+	newGameOnClick: PropTypes.func
 }
 
 export default StartPage;
