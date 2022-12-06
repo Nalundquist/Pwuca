@@ -40,7 +40,8 @@ function BodyControl(){
 		  <NewGame
 			  playerNumberInput={handlePlayerNumber}
 				newPlayerInput={handleNewPlayers}
-				playerAmount={playerQuantity} />
+				playerAmount={playerQuantity} 
+				namePromptVisible={playerNamePromptVisible} />
 	} else {
 		visiblePageElement = <StartPage newGameOnClick={handleNewGameForm} />
 	}
