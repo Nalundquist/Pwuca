@@ -1,6 +1,7 @@
 import React, {setState, useEffect} from 'react';
 import StartPage from './StartPage';
 import NewGame from './NewGame';
+import {v4} from 'uuid';
 
 function BodyControl(){
 	const bodyStyle = {
@@ -22,15 +23,21 @@ function BodyControl(){
 		setPlayerNamePromptVisible(true);
 	}
 
-	const handleNewPlayers = (newPlayers) => {
-		newPlayers.forEach(newPlayer => {
-			const addPlayer = players.concat(newPlayer);
-			setPlayers(addPlayer);
+	const handleNewPlayers = (playerNames) => {
+		const playersList = []
+		playerNames.forEach(playerName => {
+			playersList.concat({
+				name: playerName,
+				pwuca: "",
+				isTurn: false,
+				id: v4()
+			})
 		});
+		setPlayers(playersList);
 		setNewGameVisible(false);
 		setGameBoardVisible(true);
 	}
-
+	
 	let visiblePageElement;
 
 	if (gameBoardVisible){

@@ -17,8 +17,15 @@ function NewGame(props){
 		padding: '15px'
 	}
 
+	let visibleElement;
+
 	if (namePromptVisible){
-		
+		visibleElement = <PlayerName
+			playerQuan={playerAmount}
+			submitNewPlayers={newPlayerInput} />
+	} else {
+		visibleElement = <PlayerAmount
+			submitPlayerNumber={playerNumberInput} />
 	}
 	
 	return(
