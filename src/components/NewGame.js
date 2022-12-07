@@ -8,10 +8,13 @@ function NewGame(props){
 		playerNumberInput,
 		newPlayerInput,
 		playerNumber,
-		namePromptVisible} = props;
+		namePromptVisible,
+		newPlayerName,
+		playerNamesList} = props;
 
 	const promptStyle = {
 		position: 'relative',
+		width: '30%',
 		top: '40%',
 		left: '40%',
 		border: '2px solid brown',
@@ -23,7 +26,10 @@ function NewGame(props){
 	if (namePromptVisible){
 		visibleElement = <PlayerName
 			playerQuan={playerNumber}
-			submitNewPlayers={newPlayerInput} />
+			playerNames={playerNamesList}
+			submitPlayerName={newPlayerName}
+			submitNewPlayers={newPlayerInput}
+			/>
 	} else {
 		visibleElement = <PlayerAmount
 			submitPlayerNumber={playerNumberInput} />
@@ -41,6 +47,7 @@ function NewGame(props){
 NewGame.propTypes = {
 	playerNumberInput: PropTypes.func,
 	newPlayerInput: PropTypes.func,
+	newPlayerName: PropTypes.func,
 	playerNumber: PropTypes.number,
 	namePromptVisible: PropTypes.bool
 }

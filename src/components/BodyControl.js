@@ -13,6 +13,7 @@ function BodyControl(){
 	const [playerNamePromptVisible, setPlayerNamePromptVisible] = useState(false);
 	const [gameBoardVisible, setGameBoardVisible] = useState(false)
 	const [playerQuantity, setPlayerQuantity] = useState(null);
+	const [playerNames, setPlayerNames] = useState([])
 	const [players, setPlayers] = useState([])
 
 	const handleNewGameForm = () => {
@@ -24,19 +25,25 @@ function BodyControl(){
 		setPlayerNamePromptVisible(true);
 	}
 
-	const handleNewPlayers = (players) => {
-		const playersList = []
-		players.forEach(player => {
-			playersList.concat({
-				name: player.name,
-				pwuca: player.pwuca,
-				isTurn: player.isTurn,
-				id: player.id,
-				key: player.id
+	const handlePlayerName = (index, event) => {
+		let newNameList = [...playerNames];
+		newNameList[index] = event.target.value;
+		setPlayerNames(newNameList);
+	}
+	const handleNewPlayers = (playersNames) => {
+		let playersList = []
+		console.log(playersNames)
+		playersNames.forEach(playerName => {
+			playersList = playersList.concat({
+				name: playerName,
+				pwuca: "",
+				isTurn: false,
+				id: v4(),
 			})
 		});
 		setPlayers(playersList);
 		setNewGameVisible(false);
+		console.log(playersList)
 		setGameBoardVisible(true);
 	}
 
@@ -49,6 +56,8 @@ function BodyControl(){
 		  <NewGame
 			  playerNumberInput={handlePlayerNumber}
 				newPlayerInput={handleNewPlayers}
+				newPlayerName={handlePlayerName}
+				playerNamesList={playerNames}
 				playerNumber={playerQuantity} 
 				namePromptVisible={playerNamePromptVisible} />
 	} else {
