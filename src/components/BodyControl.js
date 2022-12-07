@@ -36,8 +36,9 @@ function BodyControl(){
 			playersList = playersList.concat({
 				name: playerName,
 				pwuca: "",
+				turnOrder: null,
 				isTurn: false,
-				id: v4(),
+				id: v4()
 			})
 		});
 		setPlayers(playersList);
