@@ -37,11 +37,11 @@ function BodyControl(){
 		setNewGameVisible(false);
 		setGameBoardVisible(true);
 	}
-	
+
 	let visiblePageElement;
 
 	if (gameBoardVisible){
-		visiblePageElement = <GameBoardControl />
+		visiblePageElement = <GameBoardControl playerList={players} />
 	} else if (newGameVisible){
 		visiblePageElement =
 		  <NewGame

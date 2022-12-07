@@ -1,6 +1,7 @@
 import React from "react";
 import PlayerAmount from './PlayerAmount';
 import PlayerName from './PlayerName';
+import PropTypes from 'prop-types';
 
 function NewGame(props){
 	const {
@@ -36,3 +37,12 @@ function NewGame(props){
 		</React.Fragment>
 	)
 }
+
+NewGame.propTypes = {
+	playerNumberInput: PropTypes.func,
+	newPlayerInput: PropTypes.func,
+	playerAmount: PropTypes.number,
+	namePromptVisible: PropTypes.bool
+}
+
+export default NewGame;
