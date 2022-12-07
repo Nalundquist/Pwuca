@@ -1,4 +1,4 @@
-import React, {setState, useEffect} from 'react';
+import React, {useState, useEffect} from 'react';
 import StartPage from './StartPage';
 import NewGame from './NewGame';
 import GameBoardControl from './GameBoardControl';
@@ -9,11 +9,11 @@ function BodyControl(){
 		margin: '15px'
 	}
 
-	const [newGameVisible, setNewGameVisible] = setState(false);
-	const [playerNamePromptVisible, setPlayerNamePromptVisible] = setState(false);
-	const [gameBoardVisible, setGameBoardVisible] = setState(false)
-	const [playerQuantity, setPlayerQuantity] = setState(null);
-	const [players, setPlayers] = setState([])
+	const [newGameVisible, setNewGameVisible] = useState(false);
+	const [playerNamePromptVisible, setPlayerNamePromptVisible] = useState(false);
+	const [gameBoardVisible, setGameBoardVisible] = useState(false)
+	const [playerQuantity, setPlayerQuantity] = useState(null);
+	const [players, setPlayers] = useState([])
 
 	const handleNewGameForm = () => {
 		setNewGameVisible(!newGameVisible);
