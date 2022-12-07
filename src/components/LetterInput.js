@@ -3,11 +3,9 @@ import PropTypes from 'prop-types';
 
 function LetterInput(props){
 	
-	const {input, onInput} = props;
 
 	const inputStyle = {
 		width:'35px',
-		length: '35px',
 		fontSize: '25px'
 	}
 
@@ -17,8 +15,14 @@ function LetterInput(props){
 					type='text'
 					name='letter'
 					style={inputStyle}
-					onChange={onInput}/>
+					onChange={event => props.onInput(event)}/>
 		</React.Fragment>
 	)
 }
 
+LetterInput.propTypes = {
+	onInput: PropTypes.func
+}
+
+
+export default LetterInput;

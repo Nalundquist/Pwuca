@@ -22,7 +22,7 @@ function PlayersSidebar(props){
 }
 
 PlayersSidebar.propTypes = {
-	players: PropTypes.object
+	players: PropTypes.array
 }
 
 export default PlayersSidebar; 

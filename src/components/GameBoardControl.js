@@ -6,13 +6,26 @@ import LetterInput from './LetterInput'
 
 function GameBoardControl(props){
 
-	const [word, setWord] = useState("");
-	const [userLetter, setUserLetter] = useState("");
+	const [word, setWord] = useState(null);
+	const [userLetter, setUserLetter] = useState(null);
 
 	const handleLetterInput = (event) => {
 		setUserLetter(event.target.value)
 	} 
 
+	const handleFirstLetter = () => {
+		setWord(userLetter)
+	}
+
+	const handleWordChangeStart = () => {
+		const newWord = userLetter + word;
+		setWord(newWord)
+	}
+
+	const handleWordChangeEnd = () => {
+		const newWord = word + userLetter;
+		setWord(newWord);
+	}
   const container = {
 		display: 'flex',
 		flexDirection: 'row'
@@ -22,17 +35,30 @@ function GameBoardControl(props){
 		padding: '30px'
 	}
 
-	let wordElementVisible;
-  const letterInputProp = <LetterInput onInput={handleLetterInput} />
-	if (word.length < 1){
-		wordElementVisible = {letterInputProp}
+	let currentButton;
+	let inputElementVisible;
+
+  <LetterInput onInput={handleLetterInput} />
+	if (word == null){
+		inputElementVisible = <LetterInput onInput={handleLetterInput} />
+		currentButton = <button onClick={handleFirstLetter}>Add Letter</button>
+	} else {
+		inputElementVisible = <LetterInput onInput={handleLetterInput} />
+		currentButton = 
+		<div>
+			<button onClick={handleWordChangeStart}>Add Letter to Start</button> 
+			<h3>OR</h3>
+			<button onClick={handleWordChangeEnd}>Add Letter to End</button>
+		</div>
 	}
 	console.log(props.playerList)
 	return (
 		<React.Fragment>
 			<div style={container}>
 				<div style={boardStyle}>
-					{wordElementVisible}
+					{word == null ? null : <Word wordDisplay={word}/>}
+					{inputElementVisible}
+					{currentButton}
 				</div>
 				<PlayersSidebar players={props.playerList} />
 			</div>

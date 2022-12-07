@@ -14,7 +14,7 @@ code {
     monospace;
 }
 
-/* #titlefade{
+#titlefade{
   font-size: 4em;
   font-family: 'Times New Roman', Times, serif;
   color: brown;
@@ -62,4 +62,4 @@ code {
   left: 35%;
   border: 2px solid brown;
   text-align: center;
-} */
+}
