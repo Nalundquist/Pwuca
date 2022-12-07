@@ -14,12 +14,12 @@ code {
     monospace;
 }
 
-#titlefade{
+/* #titlefade{
   font-size: 4em;
   font-family: 'Times New Roman', Times, serif;
   color: brown;
 }
-/* 
+
 #titlefade p{
   opacity: 0;
   animation: titlefadekey 5s forwards;
@@ -49,9 +49,9 @@ code {
 @keyframes newgamekey{
   0%{opacity: 0}
   100%{opacity: 1}
-} */
+}
 
-/* #newgamebox{
+#newgamebox{
   opacity: 0;
   animation: newgamekey 1.5s forwards;
   animation-delay: 11s;

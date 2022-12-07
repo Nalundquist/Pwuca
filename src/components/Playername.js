@@ -1,6 +1,5 @@
 import React from "react";
 import PropTypes from 'prop-types';
-import {v4} from 'uuid';
 
 function PlayerName(props){
 	const {
@@ -27,7 +26,6 @@ function PlayerName(props){
 						<input
 							type='text'
 							name='name'
-							// value={playerName.name || ''}
 							onChange={event => submitPlayerName(index, event)}
 							placeholder="Player Name"/>
 					</div>

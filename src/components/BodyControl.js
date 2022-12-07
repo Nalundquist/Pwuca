@@ -32,7 +32,6 @@ function BodyControl(){
 	}
 	const handleNewPlayers = (playersNames) => {
 		let playersList = []
-		console.log(playersNames)
 		playersNames.forEach(playerName => {
 			playersList = playersList.concat({
 				name: playerName,
@@ -42,8 +41,8 @@ function BodyControl(){
 			})
 		});
 		setPlayers(playersList);
+		console.log(playersList);
 		setNewGameVisible(false);
-		console.log(playersList)
 		setGameBoardVisible(true);
 	}
 
