@@ -22,3 +22,5 @@ function PlayerAmount(props){
 PlayerAmount.propTypes = {
 	submitPlayerNumber: PropTypes.func
 }
+
+export default PlayerAmount;

@@ -1,6 +1,7 @@
 import React, {setState, useEffect} from 'react';
 import StartPage from './StartPage';
 import NewGame from './NewGame';
+import GameBoardControl from './GameBoardControl';
 import {v4} from 'uuid';
 
 function BodyControl(){
