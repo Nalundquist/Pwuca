@@ -12,7 +12,7 @@ function StartPage(props){
 	<React.Fragment>
 		<div style={startStyle}>
 			<div id='titlefade'>
-				<p>"You are new here,</p><p> I think.<hr/></p>
+				<p>"You are new here,</p><p> I think.</p>
 				<p>Many years ago</p><p>I used to live in this house...</p>	
 			</div>
 			<div id='newgamebox'>

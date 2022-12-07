@@ -7,7 +7,7 @@ function NewGame(props){
 	const {
 		playerNumberInput,
 		newPlayerInput,
-		playerAmount,
+		playerNumber,
 		namePromptVisible} = props;
 
 	const promptStyle = {
@@ -22,7 +22,7 @@ function NewGame(props){
 
 	if (namePromptVisible){
 		visibleElement = <PlayerName
-			playerQuan={playerAmount}
+			playerQuan={playerNumber}
 			submitNewPlayers={newPlayerInput} />
 	} else {
 		visibleElement = <PlayerAmount
@@ -41,7 +41,7 @@ function NewGame(props){
 NewGame.propTypes = {
 	playerNumberInput: PropTypes.func,
 	newPlayerInput: PropTypes.func,
-	playerAmount: PropTypes.number,
+	playerNumber: PropTypes.number,
 	namePromptVisible: PropTypes.bool
 }
 

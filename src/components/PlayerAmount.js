@@ -5,7 +5,8 @@ function PlayerAmount(props){
 
 	function handlePlayerAmount(event){
 		event.preventDefault();
-		props.submitPlayerNumber(event.target.number.value)
+		console.log(event.target.number.value)
+		props.submitPlayerNumber(parseInt(event.target.number.value))
 	}
 	return(
 		<form onSubmit={handlePlayerAmount}>

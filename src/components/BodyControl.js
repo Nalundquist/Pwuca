@@ -24,14 +24,15 @@ function BodyControl(){
 		setPlayerNamePromptVisible(true);
 	}
 
-	const handleNewPlayers = (playerNames) => {
+	const handleNewPlayers = (players) => {
 		const playersList = []
-		playerNames.forEach(playerName => {
+		players.forEach(player => {
 			playersList.concat({
-				name: playerName,
-				pwuca: "",
-				isTurn: false,
-				id: v4()
+				name: player.name,
+				pwuca: player.pwuca,
+				isTurn: player.isTurn,
+				id: player.id,
+				key: player.id
 			})
 		});
 		setPlayers(playersList);
@@ -48,7 +49,7 @@ function BodyControl(){
 		  <NewGame
 			  playerNumberInput={handlePlayerNumber}
 				newPlayerInput={handleNewPlayers}
-				playerAmount={playerQuantity} 
+				playerNumber={playerQuantity} 
 				namePromptVisible={playerNamePromptVisible} />
 	} else {
 		visiblePageElement = <StartPage newGameOnClick={handleNewGameForm} />
