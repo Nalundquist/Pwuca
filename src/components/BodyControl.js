@@ -38,7 +38,7 @@ function BodyControl(){
 			lengthCount--
 			[playerList[lengthCount], playerList[randIndex]] =
 			[playerList[randIndex], playerList[lengthCount]] 
-			playerList[lengthCount].turnOrder = playerList[lengthCount].index;
+			playerList[lengthCount].turnOrder = playerList.indexOf(playerList[lengthCount] + 1);
 		}
 		return playerList;
 	}

@@ -15,6 +15,7 @@ function LetterInput(props){
 					type='text'
 					name='letter'
 					style={inputStyle}
+					maxLength='1'
 					onChange={event => props.onInput(event)}/>
 		</React.Fragment>
 	)

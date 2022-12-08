@@ -7,7 +7,7 @@ function Word(props){
 	)
 }
 
-Word.PropTypes = {
+Word.propTypes = {
 	wordDisplay: PropTypes.string
 }
 

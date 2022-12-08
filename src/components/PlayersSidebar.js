@@ -14,7 +14,8 @@ function PlayersSidebar(props){
 				{Array.from(props.players).map(player =>
 				<Player
 					name={player.name}
-					pwuca={player.pwuca} />
+					pwuca={player.pwuca}
+					key={player.id} />
 				)}
 			</div>
 		</React.Fragment>

@@ -13,6 +13,8 @@ function PlayerAmount(props){
 			<input
 				type="number" 
 				name="number"
+				min='2'
+				max='5'
 				placeholder="Input players (2-5)"/>
 			<button type="submit">Continue</button>
 		</form>
