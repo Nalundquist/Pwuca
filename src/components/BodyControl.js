@@ -30,6 +30,18 @@ function BodyControl(){
 		newNameList[index] = event.target.value;
 		setPlayerNames(newNameList);
 	}
+
+	const randomTurnOrder = (playerList) => {
+		let lengthCount = playerList.length, randIndex;
+		while (lengthCount != 0) {
+			randIndex = Math.floor(Math.random()*lengthCount);
+			lengthCount--
+			[playerList[lengthCount], playerList[randIndex]] =
+			[playerList[randIndex], playerList[lengthCount]] 
+			playerList[lengthCount].turnOrder = playerList[lengthCount].index;
+		}
+		return playerList;
+	}
 	const handleNewPlayers = (playersNames) => {
 		let playersList = []
 		playersNames.forEach(playerName => {
@@ -41,8 +53,7 @@ function BodyControl(){
 				id: v4()
 			})
 		});
-		setPlayers(playersList);
-		console.log(playersList);
+		setPlayers(randomTurnOrder(playersList));
 		setNewGameVisible(false);
 		setGameBoardVisible(true);
 	}
