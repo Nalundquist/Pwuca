@@ -13,9 +13,16 @@ function GameBoardControl(props){
 	const [currentPlayer, setCurrentPlayer] = useState(null);
 	const [turn, setTurn] = useState(1);
 	const [challengingPlayer, setChallengingPlayer] = useState(null);
+	const [challengingPlayerName, setChallengingPlayerName] = useState(null);
 	const [challengedPlayer, setChallengedPlayer] = useState(null);
 	const [challenge, setChallenge] = useState(false);
 
+
+	const handleChallengingPlayer = (event) => {
+		setChallengingPlayerName(event.target.value);
+	}
+
+	const handleChallenge = ()
 	const handleCurrentPlayer = (turn) => {
 		const thisPlayer = playerList.filter(player => player.turnOrder === turn)[0];
 		setCurrentPlayer(thisPlayer);
@@ -28,27 +35,26 @@ function GameBoardControl(props){
 
 	const handleLetterInput = (event) => {
 		setUserLetter(event.target.value)
-		
 	} 
 
 	const handleFirstLetter = () => {
 		setWord(userLetter);
 		handleCurrentPlayer(turn);
-		setUserLetter(null)
+		setUserLetter('')
 	}
 
 	const handleWordChangeStart = () => {
 		const newWord = userLetter + word;
 		setWord(newWord);
 		handleCurrentPlayer(turn);
-		setUserLetter(null)
+		setUserLetter('')
 	}
 
 	const handleWordChangeEnd = () => {
 		const newWord = word + userLetter;
 		setWord(newWord);
 		handleCurrentPlayer(turn);
-		setUserLetter(null)
+		setUserLetter('')
 	}
 
   const container = {
@@ -88,6 +94,15 @@ function GameBoardControl(props){
 					{currentPlayer != null ? <h4>{currentPlayer.name}'s Turn</h4> : null}
 					{inputElementVisible}
 					{currentButton}
+					{word.length >= 4 ? {
+						return({
+							<input 
+								type='text'
+								name='challenger'
+								placeholder="Who is challenging?"/>
+							<button />
+						}
+					)} : <p></p>}
 				</div>
 				<PlayersSidebar players={playerList} activePlayer={currentPlayer} />
 			</div>
