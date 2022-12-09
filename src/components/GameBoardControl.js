@@ -17,6 +17,7 @@ function GameBoardControl(props){
 	const [challengedPlayer, setChallengedPlayer] = useState(null);
 	const [challengeOne, setChallengeOne] = useState(false);
 	const [challengeTwo, setChallengeTwo] = useState(false);
+	const [challengeWait, setChallengeWait] = useState(false);
 	const [isWord, setIsWord] = useState(null);
 
 
@@ -32,9 +33,9 @@ function GameBoardControl(props){
 		setChallengedPlayer(thisChallenged);
 		setChallengingPlayer(thisChallenging);
 		setChallengeOne(true);
+		setChallengeWait(true);
 	}
 
-	
 	const handleChallengeTwo = () => {
 		const thisChallenged = 
 			playerList.filter(player => player.turnOrder === (turn - 1 ))[0];
@@ -42,8 +43,9 @@ function GameBoardControl(props){
 			playerList.filter(player => player.name === challengingPlayerName)[0];
 		setChallengedPlayer(thisChallenged);
 		setChallengingPlayer(thisChallenging);
-		setChallengeOne(true);
+		setChallengeTwo(true);
 	}
+
 	const handleCurrentPlayer = (turn) => {
 		const thisPlayer = playerList.filter(player => player.turnOrder === turn)[0];
 		setCurrentPlayer(thisPlayer);
@@ -87,6 +89,8 @@ function GameBoardControl(props){
 		padding: '30px'
 	}
 
+	let visibleWord;
+	let currentPlayerView;
 	let currentButton;
 	let inputElementVisible;
 	let challengePrompt;
@@ -94,11 +98,31 @@ function GameBoardControl(props){
 
 	if (currentPlayer === null){
 		handleCurrentPlayer(turn);
-		console.log(currentPlayer)
 	} else {
 		if (word === null){
 			inputElementVisible = <LetterInput onInput={handleLetterInput} />
 			currentButton = <button onClick={handleFirstLetter}>Add Letter</button>
+			currentPlayerView = <h4>{currentPlayer.name}'s Turn</h4>
+		} else if (challengeOne){
+			if (challengeWait){
+			currentPlayerView = 
+			<div>
+				<h3>{challengingPlayer.name} has challenged {challengedPlayer.name}</h3>
+				<p>They insist that {word} is in the dictionary.  Please wait while we check...</p>
+			</div>
+			} else {
+				if (isWord = true) {
+					<div>
+						<h3>{challengedPlayer.name} has lost the challenge as {word} is indeed a word.</h3>
+						<p>Their score is now {challengedPlayer.pwuca}</p>
+					</div>
+				} else {
+					<div>
+						<h3>{challengingPlayer.name} has lost the challenge as {word} is not a word!</h3>
+						<p>Their score is now {challengingPlayer.pwuca}</p>
+					</div>
+				}
+			}
 		} else {
 			inputElementVisible = <LetterInput onInput={handleLetterInput} />
 			currentButton = 
@@ -107,32 +131,37 @@ function GameBoardControl(props){
 				<h3>OR</h3>
 				<button onClick={handleWordChangeEnd}>Add Letter to End</button>
 			</div>
+			currentPlayerView = <h4>{currentPlayer.name}'s Turn</h4>
 		}
 	}
-	if (challengedPlayer != null || challengingPlayer != null || word.length < 4){
-		challengePrompt = null
-		challengeButton = null
-	} else if(word > 3) {
-		challengePrompt = 
-		<input
-			type='name'
-			name='challenger'
-			placeholder='Who is Challenging?'
-			onChange={event => onInputChallenging(event)} />
-		challengeButton = 
-			<div>
-				<button
-				onClick={handleChallengeOne} >That is a word!</button><br />
-				<p><strong>OR</strong></p>
-				<button onClick={handleChallengeTwo} >There is no word that contains that!</button>
-			</div>
+	if (word != null){
+		if (word.length < 4){
+			challengePrompt = null
+			challengeButton = null
+		} else if (word.length > 3) {
+			challengePrompt = 
+			<input
+				type='name'
+				name='challenger'
+				placeholder='Who is Challenging?'
+				onChange={event => onInputChallenging(event)} />
+			challengeButton = 
+				<div>
+					<button
+					onClick={handleChallengeOne} >That is a word!</button><br />
+					<p><strong>OR</strong></p>
+					<button onClick={handleChallengeTwo} >There is no word that contains that!</button>
+				</div>
+		} else if (challengeOne || challengeTwo){
+
+		}
 	}
 	return (
 		<React.Fragment>
 			<div style={container}>
 				<div style={boardStyle}>
 					{word === null ? null : <Word wordDisplay={word}/>}
-					{currentPlayer != null ? <h4>{currentPlayer.name}'s Turn</h4> : null}
+					{currentPlayerView}
 					{inputElementVisible}
 					{currentButton}
 					{challengePrompt}
