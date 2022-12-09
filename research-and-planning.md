@@ -7,3 +7,7 @@
 * 2:00pm: Further research into irish mythology and terms as well as other ways of handling listening to multiple users for response, in particular socket.IO.  Possible quote to use on load graphic for ghost-y vibes: 
 	"You are new here, I think.
 		Many years ago I used to live in this house..."
+
+### Friday 12/9/2022
+
+* 9:45: Reading upcoming lessons on React/API integration to check for 

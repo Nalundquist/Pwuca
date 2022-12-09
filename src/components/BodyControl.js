@@ -38,7 +38,7 @@ function BodyControl(){
 			lengthCount--
 			[playerList[lengthCount], playerList[randIndex]] =
 			[playerList[randIndex], playerList[lengthCount]] 
-			playerList[lengthCount].turnOrder = playerList.indexOf(playerList[lengthCount] + 1);
+			playerList[lengthCount].turnOrder = (playerList.indexOf(playerList[lengthCount])+1);
 		}
 		return playerList;
 	}
@@ -54,6 +54,7 @@ function BodyControl(){
 			})
 		});
 		setPlayers(randomTurnOrder(playersList));
+		console.log('playerlist in handleNewPlayers:'  + playersList)
 		setNewGameVisible(false);
 		setGameBoardVisible(true);
 	}
