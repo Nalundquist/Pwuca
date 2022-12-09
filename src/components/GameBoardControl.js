@@ -7,10 +7,14 @@ import LetterInput from './LetterInput'
 function GameBoardControl(props){
 
 	const {playerList} = props;
+
 	const [word, setWord] = useState(null);
 	const [userLetter, setUserLetter] = useState(null);
 	const [currentPlayer, setCurrentPlayer] = useState(null);
 	const [turn, setTurn] = useState(1);
+	const [challengingPlayer, setChallengingPlayer] = useState(null);
+	const [challengedPlayer, setChallengedPlayer] = useState(null);
+	const [challenge, setChallenge] = useState(false);
 
 	const handleCurrentPlayer = (turn) => {
 		const thisPlayer = playerList.filter(player => player.turnOrder === turn)[0];
@@ -24,24 +28,27 @@ function GameBoardControl(props){
 
 	const handleLetterInput = (event) => {
 		setUserLetter(event.target.value)
-		console.log(currentPlayer)
+		
 	} 
 
 	const handleFirstLetter = () => {
 		setWord(userLetter);
 		handleCurrentPlayer(turn);
+		setUserLetter(null)
 	}
 
 	const handleWordChangeStart = () => {
 		const newWord = userLetter + word;
 		setWord(newWord);
 		handleCurrentPlayer(turn);
+		setUserLetter(null)
 	}
 
 	const handleWordChangeEnd = () => {
 		const newWord = word + userLetter;
 		setWord(newWord);
 		handleCurrentPlayer(turn);
+		setUserLetter(null)
 	}
 
   const container = {

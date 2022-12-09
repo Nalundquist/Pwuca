@@ -11,3 +11,4 @@
 ### Friday 12/9/2022
 
 * 9:45: Reading upcoming lessons on React/API integration to check for 
+* 12:30: further reading on API lessons for integrating word validity check through freedictionary api
