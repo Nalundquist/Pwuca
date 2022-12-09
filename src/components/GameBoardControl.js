@@ -15,14 +15,35 @@ function GameBoardControl(props){
 	const [challengingPlayer, setChallengingPlayer] = useState(null);
 	const [challengingPlayerName, setChallengingPlayerName] = useState(null);
 	const [challengedPlayer, setChallengedPlayer] = useState(null);
-	const [challenge, setChallenge] = useState(false);
+	const [challengeOne, setChallengeOne] = useState(false);
+	const [challengeTwo, setChallengeTwo] = useState(false);
+	const [isWord, setIsWord] = useState(null);
 
 
-	const handleChallengingPlayer = (event) => {
+	const onInputChallenging = (event) => {
 		setChallengingPlayerName(event.target.value);
 	}
 
-	const handleChallenge = ()
+	const handleChallengeOne = () => {
+		const thisChallenged = 
+			playerList.filter(player => player.turnOrder === (turn - 1 ))[0];
+		const thisChallenging = 
+			playerList.filter(player => player.name === challengingPlayerName)[0];
+		setChallengedPlayer(thisChallenged);
+		setChallengingPlayer(thisChallenging);
+		setChallengeOne(true);
+	}
+
+	
+	const handleChallengeTwo = () => {
+		const thisChallenged = 
+			playerList.filter(player => player.turnOrder === (turn - 1 ))[0];
+		const thisChallenging = 
+			playerList.filter(player => player.name === challengingPlayerName)[0];
+		setChallengedPlayer(thisChallenged);
+		setChallengingPlayer(thisChallenging);
+		setChallengeOne(true);
+	}
 	const handleCurrentPlayer = (turn) => {
 		const thisPlayer = playerList.filter(player => player.turnOrder === turn)[0];
 		setCurrentPlayer(thisPlayer);
@@ -68,6 +89,8 @@ function GameBoardControl(props){
 
 	let currentButton;
 	let inputElementVisible;
+	let challengePrompt;
+	let challengeButton;
 
 	if (currentPlayer === null){
 		handleCurrentPlayer(turn);
@@ -86,6 +109,24 @@ function GameBoardControl(props){
 			</div>
 		}
 	}
+	if (challengedPlayer != null || challengingPlayer != null || word.length < 4){
+		challengePrompt = null
+		challengeButton = null
+	} else if(word > 3) {
+		challengePrompt = 
+		<input
+			type='name'
+			name='challenger'
+			placeholder='Who is Challenging?'
+			onChange={event => onInputChallenging(event)} />
+		challengeButton = 
+			<div>
+				<button
+				onClick={handleChallengeOne} >That is a word!</button><br />
+				<p><strong>OR</strong></p>
+				<button onClick={handleChallengeTwo} >There is no word that contains that!</button>
+			</div>
+	}
 	return (
 		<React.Fragment>
 			<div style={container}>
@@ -94,15 +135,8 @@ function GameBoardControl(props){
 					{currentPlayer != null ? <h4>{currentPlayer.name}'s Turn</h4> : null}
 					{inputElementVisible}
 					{currentButton}
-					{word.length >= 4 ? {
-						return({
-							<input 
-								type='text'
-								name='challenger'
-								placeholder="Who is challenging?"/>
-							<button />
-						}
-					)} : <p></p>}
+					{challengePrompt}
+					{challengeButton}
 				</div>
 				<PlayersSidebar players={playerList} activePlayer={currentPlayer} />
 			</div>
