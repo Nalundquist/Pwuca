@@ -13,9 +13,9 @@ function GameBoardControl(props){
 	const [turn, setTurn] = useState(1);
 
 	const handleCurrentPlayer = (turn) => {
-		const thisPlayer = playerList.filter(player => player.turnOrder === turn)
+		const thisPlayer = playerList.filter(player => player.turnOrder === turn)[0];
 		setCurrentPlayer(thisPlayer);
-		if (turn <= playerList.length){
+		if (turn < playerList.length){
 			setTurn(turn+1);
 		} else {
 			setTurn(1);
@@ -57,19 +57,21 @@ function GameBoardControl(props){
 	let inputElementVisible;
 
 	if (currentPlayer === null){
-		handleCurrentPlayer();
-	}
-	if (word === null){
-		inputElementVisible = <LetterInput onInput={handleLetterInput} />
-		currentButton = <button onClick={handleFirstLetter}>Add Letter</button>
+		handleCurrentPlayer(turn);
+		console.log(currentPlayer)
 	} else {
-		inputElementVisible = <LetterInput onInput={handleLetterInput} />
-		currentButton = 
-		<div>
-			<button onClick={handleWordChangeStart}>Add Letter to Start</button> 
-			<h3>OR</h3>
-			<button onClick={handleWordChangeEnd}>Add Letter to End</button>
-		</div>
+		if (word === null){
+			inputElementVisible = <LetterInput onInput={handleLetterInput} />
+			currentButton = <button onClick={handleFirstLetter}>Add Letter</button>
+		} else {
+			inputElementVisible = <LetterInput onInput={handleLetterInput} />
+			currentButton = 
+			<div>
+				<button onClick={handleWordChangeStart}>Add Letter to Start</button> 
+				<h3>OR</h3>
+				<button onClick={handleWordChangeEnd}>Add Letter to End</button>
+			</div>
+		}
 	}
 	return (
 		<React.Fragment>
