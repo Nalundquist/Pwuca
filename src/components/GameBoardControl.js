@@ -6,26 +6,44 @@ import LetterInput from './LetterInput'
 
 function GameBoardControl(props){
 
+	const {playerList} = props;
 	const [word, setWord] = useState(null);
 	const [userLetter, setUserLetter] = useState(null);
+	const [currentPlayer, setCurrentPlayer] = useState(null);
+	const [turn, setTurn] = useState(1);
+
+	const handleCurrentPlayer = (turn) => {
+		const thisPlayer = playerList.filter(player => player.turnOrder === turn)
+		setCurrentPlayer(thisPlayer);
+		if (turn <= playerList.length){
+			setTurn(turn+1);
+		} else {
+			setTurn(1);
+		}
+	}
 
 	const handleLetterInput = (event) => {
 		setUserLetter(event.target.value)
+		console.log(currentPlayer)
 	} 
 
 	const handleFirstLetter = () => {
-		setWord(userLetter)
+		setWord(userLetter);
+		handleCurrentPlayer(turn);
 	}
 
 	const handleWordChangeStart = () => {
 		const newWord = userLetter + word;
-		setWord(newWord)
+		setWord(newWord);
+		handleCurrentPlayer(turn);
 	}
 
 	const handleWordChangeEnd = () => {
 		const newWord = word + userLetter;
 		setWord(newWord);
+		handleCurrentPlayer(turn);
 	}
+
   const container = {
 		display: 'flex',
 		flexDirection: 'row'
@@ -38,8 +56,10 @@ function GameBoardControl(props){
 	let currentButton;
 	let inputElementVisible;
 
-  <LetterInput onInput={handleLetterInput} />
-	if (word == null){
+	if (currentPlayer === null){
+		handleCurrentPlayer();
+	}
+	if (word === null){
 		inputElementVisible = <LetterInput onInput={handleLetterInput} />
 		currentButton = <button onClick={handleFirstLetter}>Add Letter</button>
 	} else {
@@ -51,16 +71,16 @@ function GameBoardControl(props){
 			<button onClick={handleWordChangeEnd}>Add Letter to End</button>
 		</div>
 	}
-	console.log(props.playerList)
 	return (
 		<React.Fragment>
 			<div style={container}>
 				<div style={boardStyle}>
-					{word == null ? null : <Word wordDisplay={word}/>}
+					{word === null ? null : <Word wordDisplay={word}/>}
+					{currentPlayer != null ? <h4>{currentPlayer.name}'s Turn</h4> : null}
 					{inputElementVisible}
 					{currentButton}
 				</div>
-				<PlayersSidebar players={props.playerList} />
+				<PlayersSidebar players={playerList} activePlayer={currentPlayer} />
 			</div>
 		</React.Fragment>
 	)
