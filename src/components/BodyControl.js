@@ -54,15 +54,36 @@ function BodyControl(){
 			})
 		});
 		setPlayers(randomTurnOrder(playersList));
-		console.log('playerlist in handleNewPlayers:'  + playersList)
 		setNewGameVisible(false);
 		setGameBoardVisible(true);
+	}
+
+	const changePlayerScore = (thisPlayer) => {
+		if(thisPlayer.pwuca === ""){
+			thisPlayer.pwuca = "P"
+		} else if (thisPlayer.pwuca === "P") {
+			thisPlayer.pwuca = "PW"
+		} else if (thisPlayer.pwuca === "PW") {
+			thisPlayer.pwuca = "PWU"
+		} else if (thisPlayer.pwuca === "PWU") {
+			thisPlayer.pwuca = "PWUC"
+		} else{
+			thisPlayer.pwuca = "PWUCA"
+		} 
+
+		const editedPlayerList = players
+			.filter(player => player.id !== thisPlayer.id)
+			.concat(thisPlayer)
+		setPlayers(editedPlayerList);
 	}
 
 	let visiblePageElement;
 
 	if (gameBoardVisible){
-		visiblePageElement = <GameBoardControl playerList={players} />
+		visiblePageElement = 
+			<GameBoardControl
+				playerList={players}
+				changeScore={changePlayerScore} />
 	} else if (newGameVisible){
 		visiblePageElement =
 		  <NewGame

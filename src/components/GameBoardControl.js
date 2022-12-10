@@ -6,7 +6,7 @@ import LetterInput from './LetterInput'
 
 function GameBoardControl(props){
 
-	const {playerList} = props;
+	const {playerList, changeScore} = props;
 
 	const [word, setWord] = useState(null);
 	const [userLetter, setUserLetter] = useState(null);
@@ -18,38 +18,43 @@ function GameBoardControl(props){
 	const [challengeOne, setChallengeOne] = useState(false);
 	const [challengeTwo, setChallengeTwo] = useState(false);
 	const [challengeWait, setChallengeWait] = useState(false);
-	const [definition, setDefinition] = useState(null);
-	const [isWord, setIsWord] = useState(null);
 	const [error, setError] = useState(null);
 	const [isLoaded, setIsLoaded] = useState(false);
 	const [findWord, setFindWord] = useState(null);
 
 	useEffect(() => {
-		fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${props.wordToCheck}`)
-			.then(response => {
-				if(!response.ok) {
-					throw new Error(`${response.status}: ${response.statusText}`);
-				}	else {
-					return response.json()
-				}
-			})
-			.then((jsonifiedResponse) => {
-				setFindWord(jsonifiedResponse.results)
-				setIsLoaded(true);
-			})
-			.catch((error) => {
-				setError(error.message)
-				setIsLoaded(true)
-			});
+		if (challengeOne || challengeTwo){
+			fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${word}`)
+				.then(response => {
+					if(!response.ok) {
+						setTimeout(()=>{
+							throw new Error(`${response.status}: ${response.statusText}`);
+						})
+					}	else {
+						return response.json()
+					}
+				})
+				.then((jsonifiedResponse) => {
+					setFindWord(jsonifiedResponse.results)
+					setTimeout(()=>{
+						setIsLoaded(true);
+					}, 2000)
+				})
+				.catch((error) => {
+					setError(error.message)
+					setTimeout(() => {
+						setIsLoaded(true);
+					}, 2000)
+				});
+		}
 	})
-
-
 
 	const onInputChallenging = (event) => {
 		setChallengingPlayerName(event.target.value);
 	}
 
 	const handleChallengeOne = () => {
+		setChallengeWait(true);
 		const thisChallenged = 
 			playerList.filter(player => player.turnOrder === (turn - 1 ))[0];
 		const thisChallenging = 
@@ -57,10 +62,22 @@ function GameBoardControl(props){
 		setChallengedPlayer(thisChallenged);
 		setChallengingPlayer(thisChallenging);
 		setChallengeOne(true);
-		setChallengeWait(true);
+		if (isLoaded){
+			changeScore(challengingPlayer);
+		} else {
+			changeScore(challengedPlayer);
+		}
+		setTimeout(()=>{
+			setChallengeOne(false);
+			setChallengingPlayer(null);
+			setChallengedPlayer(null);
+			setChallengeWait(false);
+			setWord(null);
+		}, 1500);
 	}
 
 	const handleChallengeTwo = () => {
+		setChallengeWait();
 		const thisChallenged = 
 			playerList.filter(player => player.turnOrder === (turn - 1 ))[0];
 		const thisChallenging = 
@@ -113,7 +130,7 @@ function GameBoardControl(props){
 		padding: '30px'
 	}
 
-	let visibleWord;
+	let wordVisible;
 	let currentPlayerView;
 	let currentButton;
 	let inputElementVisible;
@@ -135,7 +152,7 @@ function GameBoardControl(props){
 				<p>They insist that {word} is in the dictionary.  Please wait while we check...</p>
 			</div>
 			} else {
-				if (isWord = true) {
+				if (isLoaded = true) {
 					<div>
 						<h3>{challengedPlayer.name} has lost the challenge as {word} is indeed a word.</h3>
 						<p>Their score is now {challengedPlayer.pwuca}</p>
@@ -147,6 +164,26 @@ function GameBoardControl(props){
 					</div>
 				}
 			}
+		} else if (challengeTwo){
+			if (challengeWait){
+				currentPlayerView = 
+				<div>
+					<h3>{challengingPlayer.name} has challenged {challengedPlayer.name}</h3>
+					<p>They insist that {word} does not lead to a word.  Please wait while we check...</p>
+				</div>
+				} else {
+					if (isLoaded = true) {
+						<div>
+							<h3>{challengedPlayer.name} has lost the challenge as {word} is indeed a word.</h3>
+							<p>Their score is now {challengedPlayer.pwuca}</p>
+						</div>
+					} else {
+						<div>
+							<h3>{challengingPlayer.name} has lost the challenge as {word} is not a word!</h3>
+							<p>Their score is now {challengingPlayer.pwuca}</p>
+						</div>
+					}
+				}
 		} else {
 			wordVisible = <h3>{word}</h3>
 			inputElementVisible = <LetterInput onInput={handleLetterInput} />
@@ -177,9 +214,7 @@ function GameBoardControl(props){
 					<p><strong>OR</strong></p>
 					<button onClick={handleChallengeTwo} >There is no word that contains that!</button>
 				</div>
-		} else if (challengeOne || challengeTwo){
-
-		}
+		} 
 	}
 	return (
 		<React.Fragment>
@@ -199,6 +234,7 @@ function GameBoardControl(props){
 }
 
 GameBoardControl.propTypes = {
-	playerList: PropTypes.array
+	playerList: PropTypes.array,
+	changeScore: PropTypes.func
 }
 export default GameBoardControl;

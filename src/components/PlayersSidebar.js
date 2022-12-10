@@ -23,7 +23,6 @@ function PlayersSidebar(props){
 								</div>
 						)
 						} else {
-							console.log('else statement')
 							return(
 								<Player
 									name={player.name}
