@@ -18,7 +18,31 @@ function GameBoardControl(props){
 	const [challengeOne, setChallengeOne] = useState(false);
 	const [challengeTwo, setChallengeTwo] = useState(false);
 	const [challengeWait, setChallengeWait] = useState(false);
+	const [definition, setDefinition] = useState(null);
 	const [isWord, setIsWord] = useState(null);
+	const [error, setError] = useState(null);
+	const [isLoaded, setIsLoaded] = useState(false);
+	const [findWord, setFindWord] = useState(null);
+
+	useEffect(() => {
+		fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${props.wordToCheck}`)
+			.then(response => {
+				if(!response.ok) {
+					throw new Error(`${response.status}: ${response.statusText}`);
+				}	else {
+					return response.json()
+				}
+			})
+			.then((jsonifiedResponse) => {
+				setFindWord(jsonifiedResponse.results)
+				setIsLoaded(true);
+			})
+			.catch((error) => {
+				setError(error.message)
+				setIsLoaded(true)
+			});
+	})
+
 
 
 	const onInputChallenging = (event) => {
@@ -124,6 +148,7 @@ function GameBoardControl(props){
 				}
 			}
 		} else {
+			wordVisible = <h3>{word}</h3>
 			inputElementVisible = <LetterInput onInput={handleLetterInput} />
 			currentButton = 
 			<div>
@@ -160,7 +185,7 @@ function GameBoardControl(props){
 		<React.Fragment>
 			<div style={container}>
 				<div style={boardStyle}>
-					{word === null ? null : <Word wordDisplay={word}/>}
+					{wordVisible}
 					{currentPlayerView}
 					{inputElementVisible}
 					{currentButton}
