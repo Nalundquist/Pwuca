@@ -29,7 +29,7 @@ function GameBoardControl(props){
 					if(!response.ok) {
 						setTimeout(()=>{
 							throw new Error(`${response.status}: ${response.statusText}`);
-						})
+						}, 2000)
 					}	else {
 						return response.json()
 					}
