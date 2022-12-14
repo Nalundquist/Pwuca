@@ -1,9 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, createContext } from 'react';
 import { auth } from './../firebase';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { addDoc } from 'firebase/firestore';
 import { Link, useNavigate } from 'react-router-dom'
+
+const LoginContext = createContext();
 
 function CreateUser(){
 
@@ -36,9 +38,9 @@ function CreateUser(){
 	const registerEmailPass = async (name, email, password) => {
 		try {
 			const asyncReg = await createUserWithEmailAndPassword(auth, email, password);
-			const user = asyncReg.user;
+			const thisUser = asyncReg.user;
 			await addDoc(collection(db, "users"), {
-				uid: user.uid,
+				uid: thisUser.uid,
 				name,
 				authProvider: 'local',
 				email
@@ -73,16 +75,20 @@ function CreateUser(){
 	}
 
 	let visiblePrompt;
+	let errorPrompt = <p>There has been an error: ${error}</p>;
 
 	if (loading) {
 		visiblePrompt = loadingComponent;
 	} else if (regError){
 		visiblePrompt = regError;
+	} else if (error){
+		visiblePrompt = errorPrompt;
 	} else {
 		visiblePrompt = null;
 	}
 
 	return(
+
 		<div style={registerStyle}>
 			{visiblePrompt}
 			<h3>Register a New Account</h3>

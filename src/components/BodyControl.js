@@ -9,6 +9,8 @@ function BodyControl(){
 		margin: '15px'
 	}
 
+	const [room, setRoom] = useState(null);
+	const [roomList, setRoomList] = useState([]);
 	const [newGameVisible, setNewGameVisible] = useState(false);
 	const [playerNamePromptVisible, setPlayerNamePromptVisible] = useState(false);
 	const [gameBoardVisible, setGameBoardVisible] = useState(false)

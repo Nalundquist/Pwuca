@@ -1,13 +1,17 @@
 import React from 'react';
 import Header from './Header';
 import BodyControl from './BodyControl';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 
 function App(){
   return(
-    <React.Fragment>
-      <Header />
-      <BodyControl />
-    </React.Fragment>
+  <Router>
+    <Header />
+    <Routes>
+      <Route path='/' element={<BodyControl />} />
+      <Route path='/register' element={<UserControl />} />
+    </Routes>
+  </Router>
   )
 }
 
