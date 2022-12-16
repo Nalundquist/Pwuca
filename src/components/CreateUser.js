@@ -61,13 +61,13 @@ function CreateUser(props){
 					onChange={(e) => setEmail(e.target.value)}
 					placeholder="Email Address" />
 				<input
-					type="text"
+					type="password"
 					style={textBoxStyle}
 					value={password}
 					onChange={(e) => setPassword(e.target.value)}
 					placeholder="Input Password" />
 				<input
-					type="text"
+					type="password"
 					style={textBoxStyle}
 					value={confirmPass}
 					onChange={(e) => setConfirmPass(e.target.value)}

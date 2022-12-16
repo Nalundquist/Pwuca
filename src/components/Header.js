@@ -1,7 +1,14 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { useEffect } from 'react';
 
 function Header(){
+
+	// useEffect(){
+	// 	if (user){
+	// 		<p>do a thing</p>
+	// 	}
+	// }
 	const headerStyle = {
 		borderBottom: '3px solid brown',
 		width: '100%',
@@ -23,10 +30,10 @@ function Header(){
 			<div style={userToolbarStyle}>
 				<ul>
 					<li>
-						<Link to='/user-control'>Register an account</Link>
+						<Link to='/register'>Register an account</Link>
 					</li>
 					<li>
-						<Link to='/user-control'>Login</Link>
+						<Link to='/login'>Login</Link>
 					</li>
 				</ul>
 			</div>
