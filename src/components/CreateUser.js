@@ -1,18 +1,17 @@
-import React, { useState, useEffect, useContext } from 'react';
-import { Link, useNavigate } from 'react-router-dom'
+import React from 'react';
 
 function CreateUser(props){
 
 	const {
-		name,
-		email,
-		password,
-		confirmPass,
-		registerEmailPass,
-		setConfirmPass,
-		setPassword,
-		setEmail,
-		setName } = props
+		userName,
+		userEmail,
+		userPassword,
+		userConfirmPass,
+		onClickRegisterEmailPass,
+		setUserConfirmPass,
+		setUserPassword,
+		setUserEmail,
+		setUserName } = props
 
 	const registerStyle = {
 		position: 'relative',
@@ -46,29 +45,29 @@ function CreateUser(props){
 				<input
 					type="text"
 					style={textBoxStyle}
-					value={name}
-					onChange={(e) => setName(e.target.value)}
+					value={userName}
+					onChange={(e) => setUserName(e.target.value)}
 					placeholder="Username" />
 				<input
 					type="text"
 					style={textBoxStyle}
-					value={email}
-					onChange={(e) => setEmail(e.target.value)}
+					value={userEmail}
+					onChange={(e) => setUserEmail(e.target.value)}
 					placeholder="Email Address" />
 				<input
 					type="password"
 					style={textBoxStyle}
-					value={password}
-					onChange={(e) => setPassword(e.target.value)}
+					value={userPassword}
+					onChange={(e) => setUserPassword(e.target.value)}
 					placeholder="Input Password" />
 				<input
 					type="password"
 					style={textBoxStyle}
-					value={confirmPass}
-					onChange={(e) => setConfirmPass(e.target.value)}
+					value={userConfirmPass}
+					onChange={(e) => setUserConfirmPass(e.target.value)}
 					placeholder="Confirm Password" />
 				<button 
-					onClick={registerEmailPass}
+					onClick={onClickRegisterEmailPass}
 					useNavigate="/">Register Account</button>
 			</div>
 		</div>

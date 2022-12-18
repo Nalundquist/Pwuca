@@ -1,12 +1,10 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { useEffect } from 'react';
-import { auth, db } from './../firebase';
-import { useAuthState } from 'react-firebase-hooks/auth';
+import { auth } from './../firebase';
 
 function Header(props){
 
-	const user = useAuthState(auth);
+	const user = auth.currentUser;
 
 	const headerStyle = {
 		borderBottom: '3px solid brown',
@@ -24,7 +22,7 @@ function Header(props){
 
 	let visibleHeader;
 
-	if (user === null){
+	if (user == null){
 		visibleHeader = 
 		<ul>
 			<li>
@@ -34,9 +32,10 @@ function Header(props){
 				<Link to='/login'>Login</Link>
 			</li>
 		</ul>
-	} else if (user != null){
+	} else{
 		visibleHeader = 
 		<React.Fragment>
+			<h4>Hello, {user.displayName}</h4>
 			<li>
 				<Link to="/user-cp">Your Control Panel</Link>
 			</li>
@@ -44,9 +43,8 @@ function Header(props){
 				<Link onClick={props.logOut}>Log Out</Link>
 			</li>
 		</React.Fragment>
-	} else {
-		visibleHeader = <p>error rendering</p>
-	}
+	} 
+
 	return(
 		<div style={headerStyle}>
 			<div style={leftHeaderStyle}>

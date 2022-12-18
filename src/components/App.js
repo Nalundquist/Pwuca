@@ -1,4 +1,4 @@
-import { auth, db } from './../firebase';
+import { auth } from './../firebase';
 import CreateUser from './CreateUser';
 import Header from './Header';
 import UserCP from './UserCP';
@@ -6,10 +6,12 @@ import UserLogin from './UserLogin';
 import NotFound from './NotFound';
 import BodyControl from './BodyControl';
 import React, { useState } from 'react';
-import { addDoc, collection } from 'firebase/firestore';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import { getAuth, signOut, createUserWithEmailAndPassword } from 'firebase/auth';
 import { useAuthState } from 'react-firebase-hooks/auth';
+import { 
+  signOut, 
+  createUserWithEmailAndPassword,
+  updateProfile } from 'firebase/auth';
 
 
 function App(){
@@ -18,11 +20,14 @@ function App(){
 	const [password, setPassword] = useState("");
 	const [confirmPass, setConfirmPass] = useState("");
 	const [name, setName] = useState("");
-	const [user, loading, error] = useAuthState(auth);
-  const thisAuth = getAuth();
+	const [user] = useAuthState(auth);
+  
 
-  const handleLogOut = async () => {
-    signOut(thisAuth).then(() => {
+
+
+  const handleLogOut = async (event) => {
+    event.preventDefault();
+    await signOut(auth).then(() => {
       console.log('sign out successful')
       console.log(user);
     }).catch((error) => {
@@ -30,24 +35,21 @@ function App(){
     })
   }
 
-	const registerEmailPass = async (name, email, password) => {
-		try {
-			const asyncReg = await createUserWithEmailAndPassword(auth, email, password)
-        .then((userCredential) => {
-          const user = userCredential.user;
-        });
-			const thisUser = asyncReg.user;
-			await addDoc(collection(db, "users"), {
-				uid: thisUser.uid,
-				name: name,
-				authProvider: 'local',
-				email: email,
-        password: password
-			});
-		}	catch (error) {
-			return(error);
-		}
+	const registerEmailPass = async (event) => {
+    event.preventDefault();
+    const registerEmail = email;
+    const registerPassword = password;
+    await createUserWithEmailAndPassword(auth, registerEmail, registerPassword)
+      .then((userCredential) => {
+        const user = userCredential.user;
+      })
+      .catch((error) => {
+        const errorCode = error.code;
+        const errorMessage = error.message;
+      });
 	}
+
+  
 
   let visibleBody;
 
@@ -55,15 +57,15 @@ function App(){
     visibleBody =
     <React.Fragment>
       <Route path="/register" element={<CreateUser
-        name={name}	
-        email={email}
-        password={password}
-        confirmPass={confirmPass}
-        setConfirmPass={setConfirmPass}
-        setEmail={setEmail}
-        setName={setName}
-        setPassword={setPassword}
-        registerEmailPass={registerEmailPass}/>} />
+        userName={name}	
+        userEmail={email}
+        userPassword={password}
+        userConfirmPass={confirmPass}
+        setUserConfirmPass={setConfirmPass}
+        setUserEmail={setEmail}
+        setUserName={setName}
+        setUserPassword={setPassword}
+        onClickRegisterEmailPass={registerEmailPass}/>} />
       <Route path="/login" element={<UserLogin />} />
     </React.Fragment> 
   } 
@@ -80,7 +82,6 @@ function App(){
         </Routes>
 			</Router>
 	)
-
 }
 
 export default App;
