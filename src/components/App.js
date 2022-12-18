@@ -8,12 +8,8 @@ import BodyControl from './BodyControl';
 import React, { useState } from 'react';
 import { addDoc, collection } from 'firebase/firestore';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import { 
-  useAuthState, 
-  getAuth,
-  signOut,
-  createUserWithEmailAndPassword
-  } from 'react-firebase-hooks/auth';
+import { getAuth, signOut, createUserWithEmailAndPassword } from 'firebase/auth';
+import { useAuthState } from 'react-firebase-hooks/auth';
 
 
 function App(){
@@ -28,11 +24,12 @@ function App(){
   const handleLogOut = async () => {
     signOut(thisAuth).then(() => {
       console.log('sign out successful')
+      console.log(user);
     }).catch((error) => {
       console.log('logout error')
     })
   }
-  
+
 	const registerEmailPass = async (name, email, password) => {
 		try {
 			const asyncReg = await createUserWithEmailAndPassword(auth, email, password)
@@ -42,10 +39,10 @@ function App(){
 			const thisUser = asyncReg.user;
 			await addDoc(collection(db, "users"), {
 				uid: thisUser.uid,
-				name: thisUser.name,
+				name: name,
 				authProvider: 'local',
-				email: thisUser.email,
-        password: thisUser.password
+				email: email,
+        password: password
 			});
 		}	catch (error) {
 			return(error);
@@ -54,7 +51,7 @@ function App(){
 
   let visibleBody;
 
-  if (!user){
+  if (user === null){
     visibleBody =
     <React.Fragment>
       <Route path="/register" element={<CreateUser
@@ -69,16 +66,17 @@ function App(){
         registerEmailPass={registerEmailPass}/>} />
       <Route path="/login" element={<UserLogin />} />
     </React.Fragment> 
-  } else {
-    visibleBody = <Route path="/" element={<BodyControl />} />
-  }
+  } 
 
 	return(
 			<Router>
         <Header logOut={handleLogOut} />
         <Routes> 
 				  {visibleBody}
-          {user ? <Route path="/userCP" element={<UserCP />} /> : null}
+          <Route path="/" element={<BodyControl />} />
+          {user 
+            ? <Route path="/user-cp" element={<UserCP />} />
+            : <Route path="/not-found" element={<NotFound />} /> }
         </Routes>
 			</Router>
 	)

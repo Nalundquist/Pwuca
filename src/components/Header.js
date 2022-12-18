@@ -6,7 +6,7 @@ import { useAuthState } from 'react-firebase-hooks/auth';
 
 function Header(props){
 
-	const user = getAuthState(auth);
+	const user = useAuthState(auth);
 
 	const headerStyle = {
 		borderBottom: '3px solid brown',
@@ -24,7 +24,8 @@ function Header(props){
 
 	let visibleHeader;
 
-	if (!user){
+	if (user === null){
+		visibleHeader = 
 		<ul>
 			<li>
 				<Link to='/register'>Register an account</Link>
@@ -33,13 +34,18 @@ function Header(props){
 				<Link to='/login'>Login</Link>
 			</li>
 		</ul>
-	} else {
-		<ul>
+	} else if (user != null){
+		visibleHeader = 
+		<React.Fragment>
 			<li>
-				<Link to="/userCP">Your Control Panel</Link>
-				<button onClick={props.logOut}>Log Out</button>
+				<Link to="/user-cp">Your Control Panel</Link>
 			</li>
-		</ul>
+			<li>
+				<Link onClick={props.logOut}>Log Out</Link>
+			</li>
+		</React.Fragment>
+	} else {
+		visibleHeader = <p>error rendering</p>
 	}
 	return(
 		<div style={headerStyle}>
@@ -47,10 +53,14 @@ function Header(props){
 				<h2>PWUCA</h2>
 			</div>
 			<div style={userToolbarStyle}>
-				{visibleHeader}
+				<ul>
+					<li>
+						<Link to="/">Home</Link>
+					</li>
+					{visibleHeader}
+				</ul>
 			</div>
 		</div>
-
 	)
 }
 

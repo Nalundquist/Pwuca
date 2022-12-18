@@ -1,13 +1,8 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { auth } from './../firebase';
-import { useAuthState } from 'react-firebase-hooks/auth';
 import { Link, useNavigate } from 'react-router-dom'
 
 function CreateUser(props){
 
-	// const [regError, setRegError] = useState(null);
-	// const [loadingComponent, setLoadingComponent] = useState(null);
-	const [user, loading, error] = useAuthState(auth);
 	const {
 		name,
 		email,
@@ -72,7 +67,9 @@ function CreateUser(props){
 					value={confirmPass}
 					onChange={(e) => setConfirmPass(e.target.value)}
 					placeholder="Confirm Password" />
-				<button onClick={registerEmailPass}>Register Account</button>
+				<button 
+					onClick={registerEmailPass}
+					useNavigate="/">Register Account</button>
 			</div>
 		</div>
 	)
