@@ -2,6 +2,7 @@ import { auth } from './../firebase';
 import CreateUser from './CreateUser';
 import Header from './Header';
 import UserCP from './UserCP';
+import SignIn from './SignIn';
 import UserLogin from './UserLogin';
 import NotFound from './NotFound';
 import BodyControl from './BodyControl';
@@ -11,6 +12,7 @@ import { useAuthState } from 'react-firebase-hooks/auth';
 import { 
   signOut, 
   createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
   updateProfile } from 'firebase/auth';
 
 
@@ -18,12 +20,10 @@ function App(){
 
 	const [email, setEmail] = useState("");
 	const [password, setPassword] = useState("");
-	const [confirmPass, setConfirmPass] = useState("");
 	const [name, setName] = useState("");
+  const [errorCode, setErrorCode] = useState(null);
+  const [errorMessage, setErrorMessage] = useState(null);
 	const [user] = useAuthState(auth);
-  
-
-
 
   const handleLogOut = async (event) => {
     event.preventDefault();
@@ -45,15 +45,48 @@ function App(){
         const user = userCredential.user;
       })
       .catch((error) => {
-        const errorCode = error.code;
-        const errorMessage = error.message;
+        setErrorCode(error.code);
+        setErrorMessage(error.message);
       });
     await updateProfile(auth.currentUser, {
       displayName: registerUserName
     })
+    console.log(email);
+    console.log(password);
+    console.log(name);
+    setEmail("");
+    setPassword("");
+    setName("");
+    console.log(email);
+    console.log(password);
+    console.log(name);
 	}
 
-  
+  const userSignIn = async (event) => {
+    event.preventDefault();
+    const signInEmail = email;
+    const signInPassword = password;
+    await signInWithEmailAndPassword(auth, signInEmail, signInPassword)
+      .then((userCredential) => {
+        const user = userCredential.user;
+      })
+      .catch((error) => {
+        setErrorCode(error.code);
+        setErrorMessage(error.message);
+      })
+    console.log(email);
+    console.log(password);
+    setEmail("");
+    setPassword("");
+    setName("");
+    console.log(email);
+    console.log(password);
+  }
+
+  const errorStyle = {
+    color: "red",
+    fontWeight: "bold"
+  }
 
   let visibleBody;
 
@@ -64,19 +97,27 @@ function App(){
         userName={name}	
         userEmail={email}
         userPassword={password}
-        userConfirmPass={confirmPass}
-        setUserConfirmPass={setConfirmPass}
         setUserEmail={setEmail}
         setUserName={setName}
         setUserPassword={setPassword}
         onClickRegisterEmailPass={registerEmailPass}/>} />
-      <Route path="/login" element={<UserLogin />} />
+      <Route path="/login" element={<SignIn
+        userEmail={email}
+        userPassword={password}
+        setUserEmail={setEmail}
+        setUserPassword={setPassword}
+        onClickUserSignIn={userSignIn}/>} />
+      <Route path="/" element ={<p>You have not registered</p>} />
     </React.Fragment> 
   } 
 
 	return(
 			<Router>
         <Header logOut={handleLogOut} />
+        <div style={errorStyle}>
+          {errorCode != null ? <p> {errorCode}</p> : null}
+          {errorMessage != null ? <p>{errorMessage}</p> : null}
+        </div>
         <Routes> 
 				  {visibleBody}
           <Route path="/" element={<BodyControl />} />

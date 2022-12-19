@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 
 function CreateUser(props){
 
@@ -6,12 +7,10 @@ function CreateUser(props){
 		userName,
 		userEmail,
 		userPassword,
-		userConfirmPass,
 		onClickRegisterEmailPass,
-		setUserConfirmPass,
 		setUserPassword,
 		setUserEmail,
-		setUserName } = props
+		setUserName } = props;
 
 	const registerStyle = {
 		position: 'relative',
@@ -38,7 +37,6 @@ function CreateUser(props){
 	}
 
 	return(
-
 		<div style={registerStyle}>
 			<h3>Register a New Account</h3>
 			<div style={registerFormStyle}>
@@ -60,19 +58,22 @@ function CreateUser(props){
 					value={userPassword}
 					onChange={(e) => setUserPassword(e.target.value)}
 					placeholder="Input Password" />
-				<input
-					type="password"
-					style={textBoxStyle}
-					value={userConfirmPass}
-					onChange={(e) => setUserConfirmPass(e.target.value)}
-					placeholder="Confirm Password" />
 				<button 
 					onClick={onClickRegisterEmailPass}
 					useNavigate="/">Register Account</button>
 			</div>
 		</div>
 	)
+}
 
+CreateUser.propTypes = {
+	userName: PropTypes.string,
+	userPassword: PropTypes.string,
+	userEmail: PropTypes.string,
+	setUserName: PropTypes.func,
+	setUserEmail: PropTypes.func,
+	setUserPassword: PropTypes.func,
+	onClickRegisterEmailPass: PropTypes.func
 }
 
 export default CreateUser;
