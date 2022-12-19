@@ -51,15 +51,9 @@ function App(){
     await updateProfile(auth.currentUser, {
       displayName: registerUserName
     })
-    console.log(email);
-    console.log(password);
-    console.log(name);
     setEmail("");
     setPassword("");
     setName("");
-    console.log(email);
-    console.log(password);
-    console.log(name);
 	}
 
   const userSignIn = async (event) => {
@@ -74,13 +68,9 @@ function App(){
         setErrorCode(error.code);
         setErrorMessage(error.message);
       })
-    console.log(email);
-    console.log(password);
     setEmail("");
     setPassword("");
     setName("");
-    console.log(email);
-    console.log(password);
   }
 
   const errorStyle = {
@@ -118,6 +108,8 @@ function App(){
           {errorCode != null ? <p> {errorCode}</p> : null}
           {errorMessage != null ? <p>{errorMessage}</p> : null}
         </div>
+          <p>{email}</p>
+          <p>{password}</p>
         <Routes> 
 				  {visibleBody}
           <Route path="/" element={<BodyControl />} />
