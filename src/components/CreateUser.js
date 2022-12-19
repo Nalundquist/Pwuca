@@ -60,7 +60,7 @@ function CreateUser(props){
 					placeholder="Input Password" />
 				<button 
 					onClick={onClickRegisterEmailPass}
-					useNavigate="/">Register Account</button>
+					usenavigate="/">Register Account</button>
 			</div>
 		</div>
 	)

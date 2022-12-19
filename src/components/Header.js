@@ -9,15 +9,22 @@ function Header(props){
 	const headerStyle = {
 		borderBottom: '3px solid brown',
 		width: '100%',
-		height: '10vh',
+		height: '15vh',
+		margin: '20px',
 		padding: '25px',
-		color: 'brown'
+		color: 'brown',
+		display: 'flex',
+		flexDirection: 'row',
+		justifyContent: 'space-between'
 	}
 	const leftHeaderStyle = {
-		align: 'left'
+		margin: '20px',
+		padding: '20px'
+
 	}
 	const userToolbarStyle = {
-		align: 'right'
+		margin: '20px',
+		paddingRight: '120px'
 	}
 
 	let visibleHeader;
@@ -35,9 +42,8 @@ function Header(props){
 	} else{
 		visibleHeader = 
 		<React.Fragment>
-			<h4>Hello, {auth.currentUser.displayName}</h4>
 			<li>
-				<Link to="/user-cp">Your Control Panel</Link>
+				<Link to="/user-cp">Control Panel</Link>
 			</li>
 			<li>
 				<Link onClick={props.logOut}>Log Out</Link>
@@ -51,6 +57,7 @@ function Header(props){
 				<h2>PWUCA</h2>
 			</div>
 			<div style={userToolbarStyle}>
+			{user != null ? <h4>Hello, {auth.currentUser.displayName}</h4> : null}
 				<ul>
 					<li>
 						<Link to="/">Home</Link>

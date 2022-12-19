@@ -99,7 +99,14 @@ function App(){
         onClickUserSignIn={userSignIn}/>} />
       <Route path="/" element ={<p>You have not registered</p>} />
     </React.Fragment> 
-  } 
+  } else {
+    visibleBody =
+    <React.Fragment>
+      <Route path="/" element={<BodyControl />} />
+      <Route path="/user-cp" element={<UserCP />} />
+    </React.Fragment>
+      
+  }
 
 	return(
 			<Router>
@@ -108,14 +115,8 @@ function App(){
           {errorCode != null ? <p> {errorCode}</p> : null}
           {errorMessage != null ? <p>{errorMessage}</p> : null}
         </div>
-          <p>{email}</p>
-          <p>{password}</p>
         <Routes> 
 				  {visibleBody}
-          <Route path="/" element={<BodyControl />} />
-          {user 
-            ? <Route path="/user-cp" element={<UserCP />} />
-            : <Route path="/not-found" element={<NotFound />} /> }
         </Routes>
 			</Router>
 	)

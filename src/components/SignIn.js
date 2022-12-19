@@ -52,7 +52,7 @@ function SignIn(props){
 					placeholder="Input Password" />
 				<button 
 					onClick={onClickUserSignIn}
-					useNavigate="/">Sign In</button>
+					usenavigate="/">Sign In</button>
 			</div>
 		</div>
 	)
