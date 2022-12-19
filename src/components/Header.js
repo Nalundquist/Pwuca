@@ -35,7 +35,7 @@ function Header(props){
 	} else{
 		visibleHeader = 
 		<React.Fragment>
-			<h4>Hello, {user.displayName}</h4>
+			<h4>Hello, {auth.currentUser.displayName}</h4>
 			<li>
 				<Link to="/user-cp">Your Control Panel</Link>
 			</li>

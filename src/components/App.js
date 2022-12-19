@@ -37,6 +37,7 @@ function App(){
 
 	const registerEmailPass = async (event) => {
     event.preventDefault();
+    const registerUserName = name
     const registerEmail = email;
     const registerPassword = password;
     await createUserWithEmailAndPassword(auth, registerEmail, registerPassword)
@@ -47,6 +48,9 @@ function App(){
         const errorCode = error.code;
         const errorMessage = error.message;
       });
+    await updateProfile(auth.currentUser, {
+      displayName: registerUserName
+    })
 	}
 
   
