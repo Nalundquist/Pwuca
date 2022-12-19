@@ -3,6 +3,9 @@ import StartPage from './StartPage';
 import NewGame from './NewGame';
 import GameBoardControl from './GameBoardControl';
 import {v4} from 'uuid';
+import {nanoid} from 'nanoid';
+import { addDoc, updateDoc } from 'firebase/firestore';
+import { auth } from '../firebase';
 
 function BodyControl(){
 	const bodyStyle = {
@@ -22,6 +25,28 @@ function BodyControl(){
 		setNewGameVisible(!newGameVisible);
 	}
 
+	const handleMakeRoom = async () => {
+		const thisPlayer = {
+			name: auth.currentUser.displayName,
+			pwuca: "",
+			turnOrder: null,
+			isTurn: false,
+			id: auth.currentUser.uid
+		}
+		await setPlayers(thisPlayer);
+		const room = {
+			playerList: players,
+			id: v4(),
+			shareId: nanoid(6),
+			word: "",
+			turn: 1,
+			currentPlayer: null,
+			playing: false,
+			challenge: 0
+		}
+		await addDoc(collection(db, "rooms"), room);
+	}
+	
 	const handlePlayerNumber = (players) => {
 		setPlayerQuantity(players);
 		setPlayerNamePromptVisible(true);
@@ -48,11 +73,11 @@ function BodyControl(){
 		let playersList = []
 		playersNames.forEach(playerName => {
 			playersList = playersList.concat({
-				name: playerName,
+				name: auth.currentUser.displayName,
 				pwuca: "",
 				turnOrder: null,
 				isTurn: false,
-				id: v4()
+				id: auth.currentUser.uid
 			})
 		});
 		setPlayers(randomTurnOrder(playersList));
