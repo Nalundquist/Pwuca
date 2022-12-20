@@ -1,4 +1,4 @@
-import { auth } from './../firebase';
+import { db, auth } from './../firebase';
 import CreateUser from './CreateUser';
 import Header from './Header';
 import UserCP from './UserCP';
@@ -22,7 +22,7 @@ import {
 
 function App(){
 
-  const [player, setPlayer] = useState
+  const [player, setPlayer] = useState(null)
 	const [email, setEmail] = useState("");
 	const [password, setPassword] = useState("");
 	const [name, setName] = useState("");
@@ -30,6 +30,19 @@ function App(){
   const [errorMessage, setErrorMessage] = useState(null);
 	const [user] = useAuthState(auth);
   
+  const handleNewPlayer = async (event) => {
+    event.preventDefault();
+    const newPlayer = {
+      name: auth.currentUser.displayName,
+      pwuca: "",
+      turnOrder: null,
+      isTurn: false,
+      id: auth.currentUser.uid,
+      inRoom: false,
+      currentRoom: null
+    }
+    addDoc(collection(db, "Players"), newPlayer)
+  }
 
   const handleLogOut = async (event) => {
     event.preventDefault();
@@ -51,16 +64,7 @@ function App(){
         })
       })
       .then((userCredential) => {
-        const newPlayer = {
-          name: auth.currentUser.displayName,
-          pwuca: "",
-          turnOrder: null,
-          isTurn: false,
-          id: auth.currentUser.uid,
-          inRoom: false,
-          currentRoom: null
-        }
-        addDoc(collection(db, "Players"), newPlayer)
+
       })
       .catch((error) => {
         setErrorCode(error.code);
@@ -78,6 +82,10 @@ function App(){
     await signInWithEmailAndPassword(auth, signInEmail, signInPassword)
       .then((userCredential) => {
         const user = userCredential.user;
+      })
+      .then(() => {
+        setErrorCode(null);
+        setErrorMessage(null);
       })
       .catch((error) => {
         setErrorCode(error.code);
@@ -117,7 +125,7 @@ function App(){
   } else {
     visibleBody =
     <React.Fragment>
-      <Route path="/" element={<BodyControl />} />
+      <Route path="/" element={<BodyControl userPlayer={player} setUserPlayer={setPlayer} />} />
       <Route path="/user-cp" element={<UserCP />} />
     </React.Fragment>
       

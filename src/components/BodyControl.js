@@ -6,28 +6,28 @@ import {v4} from 'uuid';
 import {nanoid} from 'nanoid';
 import { addDoc, updateDoc } from 'firebase/firestore';
 import { auth } from '../firebase';
+import PropTypes from "prop-types";
 
-function BodyControl(){
+function BodyControl(props){
 	const bodyStyle = {
 		margin: '15px'
 	}
 
-	const [room, setRoom] = useState(null);
+	const { userPlayer, setUserPlayer } = props;
 	const [roomList, setRoomList] = useState([]);
 	const [newGameVisible, setNewGameVisible] = useState(false);
 	const [playerNamePromptVisible, setPlayerNamePromptVisible] = useState(false);
-	const [gameBoardVisible, setGameBoardVisible] = useState(false)
-	// const [playerQuantity, setPlayerQuantity] = useState(null);
-	// const [playerNames, setPlayerNames] = useState([])
-	// const [players, setPlayers] = useState([])
+	const [gameBoardVisible, setGameBoardVisible] = useState(false);
 
+	useEffect(() => {
+		
+	})
 	const handleNewGameForm = () => {
 		setNewGameVisible(!newGameVisible);
 	}
 
 	const handleMakeRoom = async () => {
-
-
+		
 		const room = {
 			playerList: [currentPlayer],
 			id: v4(),
@@ -45,6 +45,7 @@ function BodyControl(){
 
 	const selectRoom = async (shareId, userId) => {
 		const selectedRoom = roomList.filter(room => room.id === id)[0];
+		const currentPlayer = 
 		const roomPlayerList = selectedRoom.playerList;
 		if (roomPlayerList.length < 7){
 			roomPlayerList.concat(currentPlayer);
@@ -55,21 +56,13 @@ function BodyControl(){
 				isTurn: false,
 				id: auth.currentUser.uid
 			}
-			await setRoom(selectedRoom);
 		}
-		
 	}
 
 	const handlePlayerNumber = (players) => {
 		setPlayerQuantity(players);
 		setPlayerNamePromptVisible(true);
 	}
-
-	// const handlePlayerName = (index, event) => {
-	// 	let newNameList = [...playerNames];
-	// 	newNameList[index] = event.target.value;
-	// 	setPlayerNames(newNameList);
-	// }
 
 	const randomTurnOrder = (playerList) => {
 		let lengthCount = playerList.length, randIndex;
@@ -82,21 +75,6 @@ function BodyControl(){
 		}
 		return playerList;
 	}
-	// const handleNewPlayers = (playersNames) => {
-	// 	let playersList = []
-	// 	playersNames.forEach(playerName => {
-	// 		playersList = playersList.concat({
-	// 			name: auth.currentUser.displayName,
-	// 			pwuca: "",
-	// 			turnOrder: null,
-	// 			isTurn: false,
-	// 			id: auth.currentUser.uid
-	// 		})
-	// 	});
-	// 	setPlayers(randomTurnOrder(playersList));
-	// 	setNewGameVisible(false);
-	// 	setGameBoardVisible(true);
-	// }
 
 	const changePlayerScore = (thisPlayer) => {
 		if(thisPlayer.pwuca === ""){
@@ -141,6 +119,11 @@ function BodyControl(){
 			{visiblePageElement}
 		</div>
 	)
+}
+
+BodyControl.propTypes = {
+	userPlayer: PropTypes.obj,
+	setUserPlayer: PropTypes.func
 }
 
 export default BodyControl;
