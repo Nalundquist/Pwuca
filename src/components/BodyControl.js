@@ -21,9 +21,8 @@ function BodyControl(props){
 	}
 
 	const { userPlayer, setUserPlayer } = props;
+	const [room, setRoom] = useState(null);
 	const [roomError, setRoomError] = useState(null);
-	const [newGameVisible, setNewGameVisible] = useState(false);
-	const [playerNamePromptVisible, setPlayerNamePromptVisible] = useState(false);
 	const [gameBoardVisible, setGameBoardVisible] = useState(false);
 
 	useEffect(() => {
@@ -32,14 +31,22 @@ function BodyControl(props){
 				setRoomError(!roomError);
 			}, 3000)
 		}
+		if (userPlayer.inRoom){
+			const roomRef = doc(db, "rooms", userPlayer.currentRoom);
+			if (roomRef.exists()) {
+
+			}
+		}
 	})
+
 	const handleNewGameForm = () => {
 		setNewGameVisible(!newGameVisible);
 	}
 
+	
 	const handleMakeRoom = async () => {
 		const room = {
-			playerList: [currentPlayer],
+			playerList: [userPlayer],
 			id: v4(),
 			shareId: nanoid(6),
 			word: "",
@@ -51,22 +58,22 @@ function BodyControl(props){
 			challengedPlayer: null
 		}
 		await addDoc(collection(db, "rooms"), room)
-			.then(assignPlayer(userPlayer.id));
+		.then(handleAssignPlayer(userPlayer.id));
 	}
-
-	const joinRoom = async (shareId) => {
+	
+	const handleJoinRoom = async (shareId) => {
 		const queryRoom = query(collection(db, "rooms"), where("shareId", "==", shareId));
 		const roomSnap = await getDoc(queryRoom);
 		if (roomSnap.exists()) {
 			const selectedRoom = roomSnap.data();
 			const roomPlayerList = selectedRoom.playerList;
 			if (roomPlayerList.length < 7 && selectedRoom.playing != true){
-				roomPlayerList.concat(player);
+				roomPlayerList.concat(userPlayer);
 				const roomRef = doc(db, "rooms", selectedRoom.id);
 				await updateDoc(roomRef, {
 					playerList: roomPlayerList
 				});
-				assignPlayer(selectedRoom.id)
+				handleAssignPlayer(selectedRoom.id)
 			} else if (selectedRoom.length >= 7){
 				setRoomError("That room is full")
 			} else if (selectedRoom.playing) {
@@ -78,9 +85,9 @@ function BodyControl(props){
 			setRoomError("The specified room was not found")
 		}
 	}
-
-	const assignPlayer = async (roomId) => {
-		const playerRef = (doc, "players", userPlayer.id);
+	
+	const handleAssignPlayer = async (roomId) => {
+		const playerRef = doc(db, "players", userPlayer.id);
 		const updatePlayer = {
 			inRoom: true,
 			currentRoom: roomId
@@ -88,9 +95,25 @@ function BodyControl(props){
 		await updateDoc(playerRef, updatePlayer);
 	}
 
-	const handlePlayerNumber = (players) => {
-		setPlayerQuantity(players);
-		setPlayerNamePromptVisible(true);
+	const handleRemoveRoomFromPlayer = async () => {
+		const playerRef = doc(db, "players", userPlayer.id)
+		const updatePlayer = {
+			inRoom: false,
+			currentRoom: null
+		}
+		await updateDoc(playerRef, updatePlayer)
+	}
+
+	const handleRemovePlayerFromRoom = async (roomId, playerId) => {
+		const roomRef = doc(db, "rooms", roomId);
+		const roomSnap = await getDoc(roomRef);
+		if (roomSnap.exists()) {
+			const thisRoom = roomSnap.data()
+			const newPlayerList = thisRoom.playerList.filter(player => player.id != playerId)[0];
+			await updateDoc(roomRef, {
+				playerList: newPlayerList
+			})
+		}
 	}
 
 	const randomTurnOrder = (playerList) => {
@@ -106,22 +129,7 @@ function BodyControl(props){
 	}
 
 	const changePlayerScore = (thisPlayer) => {
-		if(thisPlayer.pwuca === ""){
-			thisPlayer.pwuca = "P"
-		} else if (thisPlayer.pwuca === "P") {
-			thisPlayer.pwuca = "PW"
-		} else if (thisPlayer.pwuca === "PW") {
-			thisPlayer.pwuca = "PWU"
-		} else if (thisPlayer.pwuca === "PWU") {
-			thisPlayer.pwuca = "PWUC"
-		} else{
-			thisPlayer.pwuca = "PWUCA"
-		} 
-
-		const editedPlayerList = players
-			.filter(player => player.id !== thisPlayer.id)
-			.concat(thisPlayer)
-		setPlayers(editedPlayerList);
+		
 	}
 
 	let visiblePageElement;

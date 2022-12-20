@@ -3,8 +3,6 @@ import CreateUser from './CreateUser';
 import Header from './Header';
 import UserCP from './UserCP';
 import SignIn from './SignIn';
-import UserLogin from './UserLogin';
-import NotFound from './NotFound';
 import BodyControl from './BodyControl';
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
