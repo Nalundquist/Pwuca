@@ -6,7 +6,7 @@ import SignIn from './SignIn';
 import UserLogin from './UserLogin';
 import NotFound from './NotFound';
 import BodyControl from './BodyControl';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { 
@@ -16,6 +16,9 @@ import {
   updateProfile } from 'firebase/auth';
 import { 
   doc,
+  query,
+  where,
+  onSnapshot,
   addDoc,
   collection } from 'firebase/firestore';
 
@@ -30,6 +33,20 @@ function App(){
   const [errorMessage, setErrorMessage] = useState(null);
 	const [user] = useAuthState(auth);
   
+  useEffect(() => {
+		if (user){
+			const queryPlayer = query(collection(db, "players"), where("id", "==", auth.currentUser.uid));
+			const unSubscribe = onSnapshot(queryPlayer, (docSnapshot) => {
+				const currentPlayer = docSnapshot.data()
+				setPlayer(currentPlayer);
+			},
+			(error) => {
+				console.log("ruh roh (something bad is happening in setEffect)")
+			})
+			return () => unSubscribe;
+		}
+	}, {});
+
   const handleNewPlayer = async (event) => {
     event.preventDefault();
     const newPlayer = {
@@ -41,7 +58,7 @@ function App(){
       inRoom: false,
       currentRoom: null
     }
-    addDoc(collection(db, "Players"), newPlayer)
+    await addDoc(collection(db, "Players"), newPlayer)
   }
 
   const handleLogOut = async (event) => {
@@ -64,7 +81,7 @@ function App(){
         })
       })
       .then((userCredential) => {
-
+        handleNewPlayer(event);
       })
       .catch((error) => {
         setErrorCode(error.code);

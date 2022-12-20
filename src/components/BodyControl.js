@@ -4,9 +4,16 @@ import NewGame from './NewGame';
 import GameBoardControl from './GameBoardControl';
 import {v4} from 'uuid';
 import {nanoid} from 'nanoid';
-import { addDoc, updateDoc } from 'firebase/firestore';
-import { auth } from '../firebase';
+import { db, auth } from '../firebase';
 import PropTypes from "prop-types";
+import { 
+	doc,
+	addDoc, 
+	updateDoc, 
+	getDoc,
+	query,
+	collection,
+  where } from 'firebase/firestore';
 
 function BodyControl(props){
 	const bodyStyle = {
@@ -14,20 +21,23 @@ function BodyControl(props){
 	}
 
 	const { userPlayer, setUserPlayer } = props;
-	const [roomList, setRoomList] = useState([]);
+	const [roomError, setRoomError] = useState(null);
 	const [newGameVisible, setNewGameVisible] = useState(false);
 	const [playerNamePromptVisible, setPlayerNamePromptVisible] = useState(false);
 	const [gameBoardVisible, setGameBoardVisible] = useState(false);
 
 	useEffect(() => {
-		
+		if (roomError) {
+			setTimeout(() => {
+				setRoomError(!roomError);
+			}, 3000)
+		}
 	})
 	const handleNewGameForm = () => {
 		setNewGameVisible(!newGameVisible);
 	}
 
 	const handleMakeRoom = async () => {
-		
 		const room = {
 			playerList: [currentPlayer],
 			id: v4(),
@@ -40,23 +50,42 @@ function BodyControl(props){
 			challengingPlayer: null,
 			challengedPlayer: null
 		}
-		await addDoc(collection(db, "rooms"), room);
+		await addDoc(collection(db, "rooms"), room)
+			.then(assignPlayer(userPlayer.id));
 	}
 
-	const selectRoom = async (shareId, userId) => {
-		const selectedRoom = roomList.filter(room => room.id === id)[0];
-		const currentPlayer = 
-		const roomPlayerList = selectedRoom.playerList;
-		if (roomPlayerList.length < 7){
-			roomPlayerList.concat(currentPlayer);
-			const currentPlayer = {
-				name: auth.currentUser.displayName,
-				pwuca: "",
-				turnOrder: null,
-				isTurn: false,
-				id: auth.currentUser.uid
+	const joinRoom = async (shareId) => {
+		const queryRoom = query(collection(db, "rooms"), where("shareId", "==", shareId));
+		const roomSnap = await getDoc(queryRoom);
+		if (roomSnap.exists()) {
+			const selectedRoom = roomSnap.data();
+			const roomPlayerList = selectedRoom.playerList;
+			if (roomPlayerList.length < 7 && selectedRoom.playing != true){
+				roomPlayerList.concat(player);
+				const roomRef = doc(db, "rooms", selectedRoom.id);
+				await updateDoc(roomRef, {
+					playerList: roomPlayerList
+				});
+				assignPlayer(selectedRoom.id)
+			} else if (selectedRoom.length >= 7){
+				setRoomError("That room is full")
+			} else if (selectedRoom.playing) {
+				setRoomError("The room has a game in progress");
+			} else {
+				setRoomError("There was an error joining the room")
 			}
+		} else {
+			setRoomError("The specified room was not found")
 		}
+	}
+
+	const assignPlayer = async (roomId) => {
+		const playerRef = (doc, "players", userPlayer.id);
+		const updatePlayer = {
+			inRoom: true,
+			currentRoom: roomId
+		};
+		await updateDoc(playerRef, updatePlayer);
 	}
 
 	const handlePlayerNumber = (players) => {
@@ -68,7 +97,7 @@ function BodyControl(props){
 		let lengthCount = playerList.length, randIndex;
 		while (lengthCount != 0) {
 			randIndex = Math.floor(Math.random()*lengthCount);
-			lengthCount--
+			lengthCount--;
 			[playerList[lengthCount], playerList[randIndex]] =
 			[playerList[randIndex], playerList[lengthCount]] 
 			playerList[lengthCount].turnOrder = (playerList.indexOf(playerList[lengthCount])+1);
@@ -122,7 +151,7 @@ function BodyControl(props){
 }
 
 BodyControl.propTypes = {
-	userPlayer: PropTypes.obj,
+	userPlayer: PropTypes.object,
 	setUserPlayer: PropTypes.func
 }
 
