@@ -19,7 +19,7 @@ A word game derived from the classic game [Ghost](https://en.wikipedia.org/wiki/
 * Said fragment must always be a part of a word of four or more letters, i.e. if a player played an "A" at the beginning of "STE" they would make "ASTE" which could become "HASTE", "ASTER", "FASTEN", etc, and as such would be an eligible fragment.
 * When any player completes a word of four or more letters they are given a letter "P", "W, "U", "C", or "A", which is not good.
 * Once any player gets all five PWUCAs, they drop from the game.
-* The last player to standing wins.
+* The last player standing wins.
 * Turn Order:
 
 	* First player plays a letter
