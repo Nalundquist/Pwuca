@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 
 function JoinRoom(props){
 
-	const { onClickRoomJoin, roomToJoin, listenRoomJoin } = props;
+	const { onClickRoomJoin, listenRoomJoin } = props;
 
 	const topTextStyle = {
 		margin: '7px',
@@ -15,20 +15,24 @@ function JoinRoom(props){
 		<React.Fragment>
 			<div style={topTextStyle}>
 				<h4>Join a Room</h4>
+				<p>Input a room share id below.</p>
 			</div>
 			<div>
 				<input
 					type="text"
-					name="roomId"/>
+					name="shareId"
+					maxLength='6'
+					onChange={event => listenRoomJoin(event)} />
+				<button onClick={onClickRoomJoin}>Join</button>
 			</div>
+
 		</React.Fragment>
 	)
 }
 
 JoinRoom.propTypes = {
 	onClickRoomJoin: PropTypes.func,
-	listenRoomJoin: PropTypes.func,
-	roomToJoin: PropTypes.string
+	listenRoomJoin: PropTypes.func
 }
 
 export default JoinRoom;

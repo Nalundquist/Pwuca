@@ -42,11 +42,6 @@ function BodyControl(props){
 	const handleRoomInput = (event) => {
 		setRoomInput(event.target.value);
 	}
-
-	const handleNewGameForm = () => {
-		setNewGameVisible(!newGameVisible);
-	}
-
 	
 	const handleMakeRoom = async () => {
 		const room = {
@@ -65,8 +60,8 @@ function BodyControl(props){
 		.then(handleAssignPlayer(userPlayer.id));
 	}
 	
-	const handleJoinRoom = async (shareId) => {
-		const queryRoom = query(collection(db, "rooms"), where("shareId", "==", shareId));
+	const handleJoinRoom = async () => {
+		const queryRoom = query(collection(db, "rooms"), where("shareId", "==", roomInput));
 		const roomSnap = await getDoc(queryRoom);
 		if (roomSnap.exists()) {
 			const selectedRoom = roomSnap.data();
@@ -88,6 +83,7 @@ function BodyControl(props){
 		} else {
 			setRoomError("The specified room was not found")
 		}
+		setRoomInput(null);
 	}
 	
 	const handleAssignPlayer = async (roomId) => {
@@ -163,12 +159,11 @@ function BodyControl(props){
 		visiblePageElement = 
 		<div style={roomTableStyle}>
 			<div style={roomBoxStyle}>
-				<NewRoom />
+				<NewRoom onClickMakeRoom={handleMakeRoom} />
 			</div>
 			<div style={roomBoxStyle}>
 				<JoinRoom 
 				onClickRoomJoin={handleJoinRoom} 
-				roomToJoin={roomInput} 
 				listenRoomJoin={handleRoomInput} />
 			</div>
 		</div>
