@@ -116,6 +116,16 @@ function App(){
     fontWeight: "bold"
   }
 
+  const notUserStyle = {
+    border: '2px solid brown',
+    padding: '15px',
+    minHeight: '5vh',
+    minWidth: '5vw',
+    top: '30%',
+    left: '30%',
+    position: 'relative'
+  }
+
   let visibleBody;
 
   if (user === null){
@@ -135,7 +145,14 @@ function App(){
         setUserEmail={setEmail}
         setUserPassword={setPassword}
         onClickUserSignIn={userSignIn}/>} />
-      <Route path="/" element ={<p>You have not registered</p>} />
+      <Route path="/" element ={
+        <div style={notUserStyle}>
+          <h3>Please</h3>
+          <Link to='/register'>Register</Link>
+          <h3>Or</h3>
+          <Link to='/login'>Login</Link>
+        </div>
+      } />
     </React.Fragment> 
   } else {
     visibleBody =

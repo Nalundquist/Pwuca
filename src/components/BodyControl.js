@@ -21,9 +21,9 @@ function BodyControl(props){
 	}
 
 	const { userPlayer, setUserPlayer } = props;
-	const [room, setRoom] = useState(null);
 	const [roomError, setRoomError] = useState(null);
 	const [gameBoardVisible, setGameBoardVisible] = useState(false);
+	const [roomInput, setRoomInput] = useState(null);
 
 	useEffect(() => {
 		if (roomError) {
@@ -38,6 +38,10 @@ function BodyControl(props){
 			}
 		}
 	})
+
+	const handleRoomInput = (event) => {
+		setRoomInput(event.target.value);
+	}
 
 	const handleNewGameForm = () => {
 		setNewGameVisible(!newGameVisible);
@@ -132,6 +136,22 @@ function BodyControl(props){
 		
 	}
 
+	const roomTableStyle = {
+		position: 'relative',
+		padding: '20px',
+		top: '30%',
+		left: '30%',
+		display: 'flex',
+		flexDirection: 'row',
+		justifyContent: 'space-between'
+	}
+
+	const roomBoxStyle = {
+		border: '2px solid brown',
+		margin: '10px',
+		padding: '12px'
+	}
+
 	let visiblePageElement;
 
 	if (gameBoardVisible){
@@ -139,17 +159,19 @@ function BodyControl(props){
 			<GameBoardControl
 				playerList={players}
 				changeScore={changePlayerScore} />
-	} else if (newGameVisible){
-		visiblePageElement =
-		  <NewGame
-			  playerNumberInput={handlePlayerNumber}
-				newPlayerInput={handleNewPlayers}
-				newPlayerName={handlePlayerName}
-				playerNamesList={playerNames}
-				playerNumber={playerQuantity} 
-				namePromptVisible={playerNamePromptVisible} />
 	} else {
-		visiblePageElement = <StartPage newGameOnClick={handleNewGameForm} />
+		visiblePageElement = 
+		<div style={roomTableStyle}>
+			<div style={roomBoxStyle}>
+				<NewRoom />
+			</div>
+			<div style={roomBoxStyle}>
+				<JoinRoom 
+				onClickRoomJoin={handleJoinRoom} 
+				roomToJoin={roomInput} 
+				listenRoomJoin={handleRoomInput} />
+			</div>
+		</div>
 	}
 	return(
 		<div style={bodyStyle}>
