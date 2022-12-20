@@ -26,13 +26,7 @@ function BodyControl(){
 	}
 
 	const handleMakeRoom = async () => {
-		const currentPlayer = {
-			name: auth.currentUser.displayName,
-			pwuca: "",
-			turnOrder: null,
-			isTurn: false,
-			id: auth.currentUser.uid
-		}
+
 
 		const room = {
 			playerList: [currentPlayer],
@@ -42,7 +36,9 @@ function BodyControl(){
 			turn: 1,
 			currentPlayer: null,
 			playing: false,
-			challenge: 0
+			challenge: 0,
+			challengingPlayer: null,
+			challengedPlayer: null
 		}
 		await addDoc(collection(db, "rooms"), room);
 	}
@@ -50,15 +46,18 @@ function BodyControl(){
 	const selectRoom = async (shareId, userId) => {
 		const selectedRoom = roomList.filter(room => room.id === id)[0];
 		const roomPlayerList = selectedRoom.playerList;
-		const currentPlayer = {
-			name: auth.currentUser.displayName,
-			pwuca: "",
-			turnOrder: null,
-			isTurn: false,
-			id: auth.currentUser.uid
+		if (roomPlayerList.length < 7){
+			roomPlayerList.concat(currentPlayer);
+			const currentPlayer = {
+				name: auth.currentUser.displayName,
+				pwuca: "",
+				turnOrder: null,
+				isTurn: false,
+				id: auth.currentUser.uid
+			}
+			await setRoom(selectedRoom);
 		}
-		roomPlayerList.concat(currentPlayer);
-		await setRoom(selectedRoom);
+		
 	}
 
 	const handlePlayerNumber = (players) => {

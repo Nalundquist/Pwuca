@@ -14,24 +14,28 @@ import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   updateProfile } from 'firebase/auth';
+import { 
+  doc,
+  addDoc,
+  collection } from 'firebase/firestore';
 
 
 function App(){
 
+  const [player, setPlayer] = useState
 	const [email, setEmail] = useState("");
 	const [password, setPassword] = useState("");
 	const [name, setName] = useState("");
   const [errorCode, setErrorCode] = useState(null);
   const [errorMessage, setErrorMessage] = useState(null);
 	const [user] = useAuthState(auth);
+  
 
   const handleLogOut = async (event) => {
     event.preventDefault();
     await signOut(auth).then(() => {
-      console.log('sign out successful')
-      console.log(user);
     }).catch((error) => {
-      console.log('logout error')
+      console.log(error);
     })
   }
 
@@ -42,15 +46,26 @@ function App(){
     const registerPassword = password;
     await createUserWithEmailAndPassword(auth, registerEmail, registerPassword)
       .then((userCredential) => {
-        const user = userCredential.user;
+        updateProfile(auth.currentUser, {
+          displayName: registerUserName
+        })
+      })
+      .then((userCredential) => {
+        const newPlayer = {
+          name: auth.currentUser.displayName,
+          pwuca: "",
+          turnOrder: null,
+          isTurn: false,
+          id: auth.currentUser.uid,
+          inRoom: false,
+          currentRoom: null
+        }
+        addDoc(collection(db, "Players"), newPlayer)
       })
       .catch((error) => {
         setErrorCode(error.code);
         setErrorMessage(error.message);
       });
-    await updateProfile(auth.currentUser, {
-      displayName: registerUserName
-    })
     setEmail("");
     setPassword("");
     setName("");
@@ -84,7 +99,7 @@ function App(){
     visibleBody =
     <React.Fragment>
       <Route path="/register" element={<CreateUser
-        userName={name}	
+        userName={name}
         userEmail={email}
         userPassword={password}
         setUserEmail={setEmail}

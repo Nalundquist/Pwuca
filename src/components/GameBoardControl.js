@@ -1,8 +1,8 @@
 import React, {useState, useEffect} from 'react';
 import PlayersSidebar from './PlayersSidebar';
 import Word from './Word';
-import PropTypes from 'prop-types'
-import LetterInput from './LetterInput'
+import PropTypes from 'prop-types';
+import LetterInput from './LetterInput';
 
 function GameBoardControl(props){
 
@@ -32,7 +32,7 @@ function GameBoardControl(props){
 						}, 2000)
 					}	else {
 						return response.json()
-					}
+					};
 				})
 				.then((jsonifiedResponse) => {
 					setFindWord(jsonifiedResponse.results)
@@ -125,6 +125,7 @@ function GameBoardControl(props){
 		display: 'flex',
 		flexDirection: 'row'
 	}
+	
 	const boardStyle = {
 		width: '70%',
 		padding: '30px'
