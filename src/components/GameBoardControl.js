@@ -47,7 +47,7 @@ function GameBoardControl(props){
 					}, 2000)
 				});
 		}
-	})
+	}, [])
 
 	const onInputChallenging = (event) => {
 		setChallengingPlayerName(event.target.value);

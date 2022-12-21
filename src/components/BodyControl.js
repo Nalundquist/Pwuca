@@ -18,9 +18,6 @@ import {
 	onSnapshot} from 'firebase/firestore';
 
 function BodyControl(props){
-	const bodyStyle = {
-		margin: '15px'
-	}
 
 	const { userPlayer } = props;
 	const [room, setRoom] = useState(null);
@@ -161,6 +158,10 @@ function BodyControl(props){
 		}
 	}
 
+	const bodyContainer = {
+		width: '95%'
+	}
+
 	const roomTableStyle = {
 		position: 'relative',
 		padding: '20px',
@@ -191,9 +192,6 @@ function BodyControl(props){
 			waitPlayer={userPlayer}
 			onClickStartGame={handleStartGame} />
 		}
-		visiblePageElement = <div>
-			<p></p>
-		</div>
 	} else {
 		visiblePageElement = 
 		<div style={roomTableStyle}>
@@ -202,13 +200,13 @@ function BodyControl(props){
 			</div>
 			<div style={roomBoxStyle}>
 				<JoinRoom 
-				onClickRoomJoin={handleJoinRoom} 
-				listenRoomJoin={handleRoomInput} />
+					onClickRoomJoin={handleJoinRoom} 
+					listenRoomJoin={handleRoomInput} />
 			</div>
 		</div>
 	}
 	return(
-		<div style={bodyStyle}>
+		<div style={bodyContainer}>
 			{visiblePageElement}
 		</div>
 	)

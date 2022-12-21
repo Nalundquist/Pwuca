@@ -8,7 +8,7 @@ function Header(props){
 
 	const headerStyle = {
 		borderBottom: '3px solid brown',
-		width: '100%',
+		width: '90vw',
 		height: '15vh',
 		margin: '20px',
 		padding: '25px',

@@ -111,6 +111,11 @@ function App(){
     setName("");
   }
 
+  const pageContainer = {
+    position: 'relative',
+    width: '100%',
+    height: '100%'
+  }
   const errorStyle = {
     color: "red",
     fontWeight: "bold"

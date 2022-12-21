@@ -12,6 +12,7 @@ function WaitLobby(props){
 		top:'30%',
 		left: '30%',
 		padding: '20px',
+		width: '95%',
 		display: 'flex',
 		flexDirection: 'column',
 		justifyContent: 'space-between'
