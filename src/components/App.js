@@ -5,7 +5,7 @@ import UserCP from './UserCP';
 import SignIn from './SignIn';
 import BodyControl from './BodyControl';
 import React, { useState, useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { Link, BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { 
   signOut, 
@@ -43,7 +43,7 @@ function App(){
 			})
 			return () => unSubscribe;
 		}
-	}, {});
+	}, []);
 
   const handleNewPlayer = async (event) => {
     event.preventDefault();
@@ -157,7 +157,7 @@ function App(){
   } else {
     visibleBody =
     <React.Fragment>
-      <Route path="/" element={<BodyControl userPlayer={player} setUserPlayer={setPlayer} />} />
+      <Route path="/" element={<BodyControl userPlayer={player} />} />
       <Route path="/user-cp" element={<UserCP />} />
     </React.Fragment>
       

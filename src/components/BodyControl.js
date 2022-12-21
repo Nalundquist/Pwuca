@@ -1,11 +1,12 @@
-import React, {useState, useEffect} from 'react';
-import StartPage from './StartPage';
-import NewGame from './NewGame';
+import NewRoom from './NewRoom';
+import JoinRoom from './JoinRoom';
+import WaitLobby from './WaitLobby';
 import GameBoardControl from './GameBoardControl';
+import React, {useState, useEffect} from 'react';
+import PropTypes from "prop-types";
 import {v4} from 'uuid';
 import {nanoid} from 'nanoid';
-import { db, auth } from '../firebase';
-import PropTypes from "prop-types";
+import { db } from '../firebase';
 import { 
 	doc,
 	addDoc, 
@@ -13,16 +14,17 @@ import {
 	getDoc,
 	query,
 	collection,
-  where } from 'firebase/firestore';
+  where, 
+	onSnapshot} from 'firebase/firestore';
 
 function BodyControl(props){
 	const bodyStyle = {
 		margin: '15px'
 	}
 
-	const { userPlayer, setUserPlayer } = props;
+	const { userPlayer } = props;
+	const [room, setRoom] = useState(null);
 	const [roomError, setRoomError] = useState(null);
-	const [gameBoardVisible, setGameBoardVisible] = useState(false);
 	const [roomInput, setRoomInput] = useState(null);
 
 	useEffect(() => {
@@ -31,13 +33,31 @@ function BodyControl(props){
 				setRoomError(!roomError);
 			}, 3000)
 		}
-		if (userPlayer.inRoom){
-			const roomRef = doc(db, "rooms", userPlayer.currentRoom);
-			if (roomRef.exists()) {
-
+		if (userPlayer != null){
+			if (userPlayer.inRoom){
+				const roomRef = doc(db, "rooms", userPlayer.currentRoom);
+				const roomSnap = getDoc(roomRef);
+				if (roomSnap.exists()) { 
+					setRoom(roomSnap.data());
+				} else {
+					setRoom(null);
+					handleRemovePlayerFromRoom()
+				}
 			}
 		}
-	})
+		if (room){
+			const queryRoom = query(collection(db, 'players'), where("id", "==", room.id));
+			const unSubscribe = onSnapshot(queryRoom, (docSnapshot) => {
+				const currentRoom = docSnapshot.data();
+				setRoom(currentRoom);
+			},
+			(error) => {
+				setRoomError('An error occurred while updating room from database');
+				console.log('double ruh roh (something bad updating room from firestore)')
+			})
+			return () => unSubscribe;
+		}
+	}, []);
 
 	const handleRoomInput = (event) => {
 		setRoomInput(event.target.value);
@@ -96,40 +116,49 @@ function BodyControl(props){
 	}
 
 	const handleRemoveRoomFromPlayer = async () => {
-		const playerRef = doc(db, "players", userPlayer.id)
+		const playerRef = doc(db, "players", userPlayer.id);
 		const updatePlayer = {
 			inRoom: false,
 			currentRoom: null
-		}
-		await updateDoc(playerRef, updatePlayer)
+		};
+		await updateDoc(playerRef, updatePlayer);
 	}
 
 	const handleRemovePlayerFromRoom = async (roomId, playerId) => {
 		const roomRef = doc(db, "rooms", roomId);
 		const roomSnap = await getDoc(roomRef);
 		if (roomSnap.exists()) {
-			const thisRoom = roomSnap.data()
+			const thisRoom = roomSnap.data();
 			const newPlayerList = thisRoom.playerList.filter(player => player.id != playerId)[0];
 			await updateDoc(roomRef, {
 				playerList: newPlayerList
-			})
+			});
 		}
+		handleRemoveRoomFromPlayer();
 	}
 
-	const randomTurnOrder = (playerList) => {
-		let lengthCount = playerList.length, randIndex;
+	const handleShuffle = () => {
+		let shufflePlayerList = {...room.playerList};
+		let lengthCount = shufflePlayerList.length, randIndex;
 		while (lengthCount != 0) {
 			randIndex = Math.floor(Math.random()*lengthCount);
 			lengthCount--;
-			[playerList[lengthCount], playerList[randIndex]] =
-			[playerList[randIndex], playerList[lengthCount]] 
-			playerList[lengthCount].turnOrder = (playerList.indexOf(playerList[lengthCount])+1);
+			[shufflePlayerList[lengthCount], shufflePlayerList[randIndex]] =
+			[shufflePlayerList[randIndex], shufflePlayerList[lengthCount]];
+			shufflePlayerList[lengthCount].turnOrder = (shufflePlayerList.indexOf(shufflePlayerList[lengthCount])+1);
 		}
-		return playerList;
+		return shufflePlayerList;
 	}
 
-	const changePlayerScore = (thisPlayer) => {
-		
+	const handleStartGame = async () => {
+		if (room.playerList > 1){
+			const roomRef = doc(db, "rooms", room.id);
+				const newPlayerList = handleShuffle();
+				await updateDoc(roomRef, {
+					playerList: newPlayerList,
+					playing: true,
+				});
+		}
 	}
 
 	const roomTableStyle = {
@@ -150,11 +179,21 @@ function BodyControl(props){
 
 	let visiblePageElement;
 
-	if (gameBoardVisible){
-		visiblePageElement = 
-			<GameBoardControl
-				playerList={players}
-				changeScore={changePlayerScore} />
+	if (room) {
+		if (room.playing){
+			visiblePageElement = 
+				<GameBoardControl
+					gameRoom={room}
+					gamePlayer={userPlayer} />
+		} else {
+			visiblePageElement = 
+			<WaitLobby waitRoom={room}
+			waitPlayer={userPlayer}
+			onClickStartGame={handleStartGame} />
+		}
+		visiblePageElement = <div>
+			<p></p>
+		</div>
 	} else {
 		visiblePageElement = 
 		<div style={roomTableStyle}>

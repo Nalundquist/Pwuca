@@ -38,7 +38,7 @@ function SignIn(props){
 		<div style={signInStyle}>
 			<h3>Sign In</h3>
 			<div style={signInFormStyle}>
-			<input
+				<input
 					type="text"
 					style={textBoxStyle}
 					value={userEmail}
