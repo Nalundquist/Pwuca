@@ -5,7 +5,7 @@ import GameBoardControl from './GameBoardControl';
 import React, {useState, useEffect} from 'react';
 import PropTypes from "prop-types";
 import {nanoid} from 'nanoid';
-import { db } from '../firebase';
+import { auth, db } from '../firebase';
 import { 
 	doc,
 	addDoc, 
@@ -18,7 +18,7 @@ import {
 
 function BodyControl(props){
 
-	const { userPlayer } = props;
+	const { userPlayer, userPlayerRef } = props;
 	const [room, setRoom] = useState(null);
 	const [roomError, setRoomError] = useState(null);
 	const [roomInput, setRoomInput] = useState(null);
@@ -31,7 +31,7 @@ function BodyControl(props){
 		}
 		if (userPlayer != null){
 			if (userPlayer.inRoom){
-				const roomRef = doc(db, "rooms", userPlayer.currentRoom);
+				const roomRef = doc(db, "Rooms", userPlayer.currentRoom);
 				const roomSnap = getDoc(roomRef);
 				if (roomSnap.exists()) { 
 					setRoom(roomSnap.data());
@@ -71,19 +71,19 @@ function BodyControl(props){
 			challengingPlayer: null,
 			challengedPlayer: null
 		}
-		await addDoc(collection(db, "rooms"), room)
-		await handleAssignPlayer(userPlayer.userId);
+		await addDoc(collection(db, "Rooms"), room)
+		await handleAssignPlayer(userPlayerRef);
 	}
 	
 	const handleJoinRoom = async () => {
-		const queryRoom = query(collection(db, "rooms"), where("shareId", "==", roomInput));
+		const queryRoom = query(collection(db, "Rooms"), where("shareId", "==", roomInput));
 		const roomSnap = await getDoc(queryRoom);
 		if (roomSnap.exists()) {
 			const selectedRoom = roomSnap.data();
 			const roomPlayerList = selectedRoom.playerList;
 			if (roomPlayerList.length < 7 && selectedRoom.playing != true){
 				roomPlayerList.concat(userPlayer);
-				const roomRef = doc(db, "Rooms", selectedRoom.id);
+				const roomRef = doc(db, "Rooms", roomSnap.id);
 				await updateDoc(roomRef, {
 					playerList: roomPlayerList
 				});
@@ -102,7 +102,7 @@ function BodyControl(props){
 	}
 	
 	const handleAssignPlayer = async (roomId) => {
-		const playerRef = doc(db, "players", userPlayer.userId);
+		const playerRef = doc((db, "Players"), userPlayerRef);
 		const updatePlayer = {
 			inRoom: true,
 			currentRoom: roomId
@@ -111,7 +111,7 @@ function BodyControl(props){
 	}
 
 	const handleRemoveRoomFromPlayer = async () => {
-		const playerRef = doc(db, "players", userPlayer.userId);
+		const playerRef = doc(db, "Players", userPlayerRef);
 		const updatePlayer = {
 			inRoom: false,
 			currentRoom: null
@@ -119,12 +119,12 @@ function BodyControl(props){
 		await updateDoc(playerRef, updatePlayer);
 	}
 
-	const handleRemovePlayerFromRoom = async (roomId, playerId) => {
-		const roomRef = doc(db, "rooms", roomId);
+	const handleRemovePlayerFromRoom = async (roomId) => {
+		const roomRef = doc(db, "Rooms", roomId);
 		const roomSnap = await getDoc(roomRef);
 		if (roomSnap.exists()) {
 			const thisRoom = roomSnap.data();
-			const newPlayerList = thisRoom.playerList.filter(player => player.userId != playerId)[0];
+			const newPlayerList = thisRoom.playerList.filter(player => player.userId != auth.currentUser.uid)[0];
 			await updateDoc(roomRef, {
 				playerList: newPlayerList
 			});
@@ -147,7 +147,7 @@ function BodyControl(props){
 
 	const handleStartGame = async () => {
 		if (room.playerList > 1){
-			const roomRef = doc(db, "rooms", room.id);
+			const roomRef = doc(db, "Rooms", room.id);
 				const newPlayerList = handleShuffle();
 				await updateDoc(roomRef, {
 					playerList: newPlayerList,

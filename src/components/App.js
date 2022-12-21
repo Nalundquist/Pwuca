@@ -23,12 +23,15 @@ import {
   where,
   onSnapshot,
   addDoc,
-  collection } from 'firebase/firestore';
+  collection, 
+  getDoc,
+  updateDoc} from 'firebase/firestore';
 
 
 function App(){
 
   const [player, setPlayer] = useState(null)
+  const [playerId, setPlayerId] = useState("")
 	const [email, setEmail] = useState("");
 	const [password, setPassword] = useState("");
 	const [name, setName] = useState("");
@@ -36,42 +39,77 @@ function App(){
   const [errorMessage, setErrorMessage] = useState(null);
 	const [user] = useAuthState(auth);
   const navigate = useNavigate();
-  
-  useEffect(() => {
-		if (user != null){
-			const queryPlayer = query(collection(db, "players"), where("userId", "==", auth.currentUser.uid));
-			const unSubscribe = onSnapshot(queryPlayer, (docSnapshot) => {
-				const currentPlayer = {
-          name: docSnapshot.data().name,
-          pwuca: docSnapshot.data().pwuca,
-          turnOrder: docSnapshot.data().turnOrder,
-          isTurn: docSnapshot.data().isTurn,
-          userId: docSnapshot.data().userId,
-          inRoom: false,
-          currentRoom: null
-        }
-				setPlayer(currentPlayer);
-			},
-			(error) => {
-				console.log("ruh roh (something bad is happening in setEffect)")
-			})
-			return () => unSubscribe();
-		}
-	}, []);
 
-  const handleNewPlayer = async () => {
-    console.log('in new player')
-    const newPlayer = {
-      name: auth.currentUser.displayName,
+  const handleNewPlayer = async (UserCredential) => {
+    const newPlayer = await addDoc(collection(db, "Players"), {
+      name: name,
       pwuca: "",
       turnOrder: null,
       isTurn: false,
-      userId: auth.currentUser.uid,
+      userId: UserCredential.user.uid,
       inRoom: false,
       currentRoom: null
-    }
-    await setPlayer(newPlayer)
-    await addDoc(collection(db, "Players"), newPlayer)
+    });
+    setPlayerId(newPlayer.id);
+    return newPlayer;
+  }
+
+  // const handleSetPlayer = async (newPlayer) => {
+  //   const playerRef = doc((db, "Players"), playerId)
+  //   const playerSnap = await getDoc(playerRef);
+  //   if (playerSnap.exists()) {
+  //     setPlayer(playerSnap.data());
+  //     return;
+  //   } else {
+  //     console.log("player not found");
+  //     return;
+  //   }
+  // }
+  
+	const registerEmailPass =  (event) => {
+    event.preventDefault();
+    const registerEmail = email;
+    const registerPassword = password;
+    createUserWithEmailAndPassword(auth, registerEmail, registerPassword)
+      .then((UserCredential) => 
+        handleNewPlayer(UserCredential)
+          .then((newPlayer) => 
+            setPlayer(newPlayer)
+              .then(() => 
+              navigate("/")))
+      )
+      .catch((error) => {
+        setErrorCode(error.code);
+        setErrorMessage(error.message);
+      });
+    setEmail("");
+    setPassword("");
+    setName("");
+  };
+
+  const handleSignInPlayer = async (id) => {
+    const queryPlayer = await query(collection(db, "Players"), where("userId", "==", id));
+    const playerSnap = await getDoc(queryPlayer);
+    await setPlayerId(playerSnap.id);
+    await handleSetPlayer(playerSnap.data());
+  }
+  
+  const userSignIn = async (event) => {
+    event.preventDefault();
+    const signInEmail = email;
+    const signInPassword = password;
+      signInWithEmailAndPassword(auth, signInEmail, signInPassword)
+        .then((userCredential) => {
+          handleSignInPlayer(UserCredential);
+          navigate("/");
+        })
+        .catch (error) 
+          setErrorCode(error.code);
+          setErrorMessage(error.message);
+        
+      setEmail("");
+      setPassword("");
+    
   }
 
   const handleLogOut = async (event) => {
@@ -81,53 +119,7 @@ function App(){
       console.log(error);
     })
   }
-
-  const updateUserName = async (name) => {
-    await updateProfile(auth.currentUser, {
-      displayName: name
-    })
-  }
-
-	const registerEmailPass = async (event) => {
-    event.preventDefault();
-    const registerUserName = name;
-    const registerEmail = email;
-    const registerPassword = password;
-    try {
-      await createUserWithEmailAndPassword(auth, registerEmail, registerPassword);
-      await ((userCredential) => {
-        const user = userCredential.user;
-      })
-      await updateUserName(registerUserName);
-      await handleNewPlayer();
-      setEmail("");
-      setPassword("");
-      setName("");
-      navigate('/');
-    } catch (error) {
-      setErrorCode(error.code);
-      setErrorMessage(error.message);
-    }
-  };
-
-  const userSignIn = async (event) => {
-    event.preventDefault();
-    const signInEmail = email;
-    const signInPassword = password;
-    try {
-      signInWithEmailAndPassword(auth, signInEmail, signInPassword)
-      await ((userCredential) => {
-        const user = userCredential.user;
-      })
-      setEmail("");
-      setPassword("");
-      navigate("/");
-    } catch (error) {
-        setErrorCode(error.code);
-        setErrorMessage(error.message);
-    }
-  }
-
+  
   const pageContainer = {
     position: 'relative',
     width: '100%',
@@ -177,7 +169,7 @@ function App(){
   } else {
     visibleBody =
     <React.Fragment>
-      <Route path="/" element={<BodyControl userPlayer={player} />} />
+      <Route path="/" element={<BodyControl userPlayer={player} userPlayerId={playerId}/>} />
       <Route path="/user-cp" element={<UserCP />} />
     </React.Fragment>
       
