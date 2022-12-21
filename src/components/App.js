@@ -40,8 +40,8 @@ function App(){
 	const [user] = useAuthState(auth);
   const navigate = useNavigate();
 
-  const handleNewPlayer = async (UserCredential) => {
-    const newPlayer = await addDoc(collection(db, "Players"), {
+  const handleNewPlayer = (UserCredential) => {
+    const newPlayer = addDoc(collection(db, "Players"), {
       name: name,
       pwuca: "",
       turnOrder: null,
@@ -49,24 +49,28 @@ function App(){
       userId: UserCredential.user.uid,
       inRoom: false,
       currentRoom: null
-    });
-    setPlayerId(newPlayer.id);
+    })
+      .then((docRef) => {
+        console.log(docRef.id);
+        setPlayerId(docRef.id);
+      })
+    console.log(UserCredential);
+    console.log(newPlayer);
+    console.log(UserCredential);
     return newPlayer;
   }
 
-  // const handleSetPlayer = async (newPlayer) => {
-  //   const playerRef = doc((db, "Players"), playerId)
-  //   const playerSnap = await getDoc(playerRef);
-  //   if (playerSnap.exists()) {
-  //     setPlayer(playerSnap.data());
-  //     return;
-  //   } else {
-  //     console.log("player not found");
-  //     return;
-  //   }
-  // }
+  const handleSetPlayer = async (newPlayer) => {
+    setPlayer(newPlayer);
+    return "/";
+  }
+
+  const handleSetPlayerId = async (player) => {
+    setPlayerId(player.id);
+    return player;
+  }
   
-	const registerEmailPass =  (event) => {
+	const registerEmailPass = (event) => {
     event.preventDefault();
     const registerEmail = email;
     const registerPassword = password;
@@ -74,9 +78,9 @@ function App(){
       .then((UserCredential) => 
         handleNewPlayer(UserCredential)
           .then((newPlayer) => 
-            setPlayer(newPlayer)
-              .then(() => 
-              navigate("/")))
+            handleSetPlayer(newPlayer)
+              .then((home) => 
+              navigate(home)))
       )
       .catch((error) => {
         setErrorCode(error.code);
@@ -89,35 +93,42 @@ function App(){
 
   const handleSignInPlayer = async (id) => {
     const queryPlayer = await query(collection(db, "Players"), where("userId", "==", id));
-    const playerSnap = await getDoc(queryPlayer);
-    await setPlayerId(playerSnap.id);
-    await handleSetPlayer(playerSnap.data());
+    await getDoc(queryPlayer)
+      .then((doc) => 
+        handleSetPlayerId(doc)
+          .then((doc) => 
+            handleSetPlayer(doc)
+              .then((home) => 
+                navigate(home)
+              )
+          )
+      );
   }
   
   const userSignIn = async (event) => {
     event.preventDefault();
     const signInEmail = email;
     const signInPassword = password;
-      signInWithEmailAndPassword(auth, signInEmail, signInPassword)
-        .then((userCredential) => {
-          handleSignInPlayer(UserCredential);
-          navigate("/");
-        })
-        .catch (error) 
-          setErrorCode(error.code);
-          setErrorMessage(error.message);
-        
-      setEmail("");
-      setPassword("");
-    
+    signInWithEmailAndPassword(auth, signInEmail, signInPassword)
+      .then((UserCredential) => 
+        handleSignInPlayer(UserCredential.user.uid)
+      )
+      .catch ((error) =>{
+        setErrorCode(error.code);
+        setErrorMessage(error.message);
+      });
+    setEmail("");
+    setPassword("");
   }
 
   const handleLogOut = async (event) => {
     event.preventDefault();
-    await signOut(auth).then(() => {
-    }).catch((error) => {
+    await signOut(auth)
+    .catch((error) => {
       console.log(error);
-    })
+    });
+    setPlayer(null)
+    setPlayerId("")
   }
   
   const pageContainer = {
