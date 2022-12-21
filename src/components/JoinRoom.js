@@ -25,7 +25,6 @@ function JoinRoom(props){
 					onChange={event => listenRoomJoin(event)} />
 				<button onClick={onClickRoomJoin}>Join</button>
 			</div>
-
 		</React.Fragment>
 	)
 }

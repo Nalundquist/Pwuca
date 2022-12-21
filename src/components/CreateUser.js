@@ -1,6 +1,5 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { useNavigate } from 'react-router-dom';
 
 function CreateUser(props){
 
@@ -60,8 +59,7 @@ function CreateUser(props){
 					onChange={(e) => setUserPassword(e.target.value)}
 					placeholder="Input Password" />
 				<button 
-					onClick={onClickRegisterEmailPass}
-					usenavigate="/">Register Account</button>
+					onClick={onClickRegisterEmailPass}>Register Account</button>
 			</div>
 		</div>
 	)

@@ -5,8 +5,13 @@ import UserCP from './UserCP';
 import SignIn from './SignIn';
 import BodyControl from './BodyControl';
 import React, { useState, useEffect } from 'react';
-import { Link, BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { useAuthState } from 'react-firebase-hooks/auth';
+import { Link,
+  useNavigate,
+  BrowserRouter as
+    Router,
+    Routes,
+    Route } from 'react-router-dom';
 import { 
   signOut, 
   createUserWithEmailAndPassword,
@@ -30,32 +35,42 @@ function App(){
   const [errorCode, setErrorCode] = useState(null);
   const [errorMessage, setErrorMessage] = useState(null);
 	const [user] = useAuthState(auth);
+  const navigate = useNavigate();
   
   useEffect(() => {
-		if (user){
-			const queryPlayer = query(collection(db, "players"), where("id", "==", auth.currentUser.uid));
+		if (user != null){
+			const queryPlayer = query(collection(db, "players"), where("userId", "==", auth.currentUser.uid));
 			const unSubscribe = onSnapshot(queryPlayer, (docSnapshot) => {
-				const currentPlayer = docSnapshot.data()
+				const currentPlayer = {
+          name: docSnapshot.data().name,
+          pwuca: docSnapshot.data().pwuca,
+          turnOrder: docSnapshot.data().turnOrder,
+          isTurn: docSnapshot.data().isTurn,
+          userId: docSnapshot.data().userId,
+          inRoom: false,
+          currentRoom: null
+        }
 				setPlayer(currentPlayer);
 			},
 			(error) => {
 				console.log("ruh roh (something bad is happening in setEffect)")
 			})
-			return () => unSubscribe;
+			return () => unSubscribe();
 		}
 	}, []);
 
-  const handleNewPlayer = async (event) => {
-    event.preventDefault();
+  const handleNewPlayer = async () => {
+    console.log('in new player')
     const newPlayer = {
       name: auth.currentUser.displayName,
       pwuca: "",
       turnOrder: null,
       isTurn: false,
-      id: auth.currentUser.uid,
+      userId: auth.currentUser.uid,
       inRoom: false,
       currentRoom: null
     }
+    await setPlayer(newPlayer)
     await addDoc(collection(db, "Players"), newPlayer)
   }
 
@@ -67,48 +82,50 @@ function App(){
     })
   }
 
+  const updateUserName = async (name) => {
+    await updateProfile(auth.currentUser, {
+      displayName: name
+    })
+  }
+
 	const registerEmailPass = async (event) => {
     event.preventDefault();
-    const registerUserName = name
+    const registerUserName = name;
     const registerEmail = email;
     const registerPassword = password;
-    await createUserWithEmailAndPassword(auth, registerEmail, registerPassword)
-      .then((userCredential) => {
-        updateProfile(auth.currentUser, {
-          displayName: registerUserName
-        })
+    try {
+      await createUserWithEmailAndPassword(auth, registerEmail, registerPassword);
+      await ((userCredential) => {
+        const user = userCredential.user;
       })
-      .then((userCredential) => {
-        handleNewPlayer(event);
-      })
-      .catch((error) => {
-        setErrorCode(error.code);
-        setErrorMessage(error.message);
-      });
-    setEmail("");
-    setPassword("");
-    setName("");
-	}
+      await updateUserName(registerUserName);
+      await handleNewPlayer();
+      setEmail("");
+      setPassword("");
+      setName("");
+      navigate('/');
+    } catch (error) {
+      setErrorCode(error.code);
+      setErrorMessage(error.message);
+    }
+  };
 
   const userSignIn = async (event) => {
     event.preventDefault();
     const signInEmail = email;
     const signInPassword = password;
-    await signInWithEmailAndPassword(auth, signInEmail, signInPassword)
-      .then((userCredential) => {
+    try {
+      signInWithEmailAndPassword(auth, signInEmail, signInPassword)
+      await ((userCredential) => {
         const user = userCredential.user;
       })
-      .then(() => {
-        setErrorCode(null);
-        setErrorMessage(null);
-      })
-      .catch((error) => {
+      setEmail("");
+      setPassword("");
+      navigate("/");
+    } catch (error) {
         setErrorCode(error.code);
         setErrorMessage(error.message);
-      })
-    setEmail("");
-    setPassword("");
-    setName("");
+    }
   }
 
   const pageContainer = {
@@ -126,8 +143,6 @@ function App(){
     padding: '15px',
     minHeight: '5vh',
     minWidth: '5vw',
-    top: '30%',
-    left: '30%',
     position: 'relative'
   }
 
@@ -169,16 +184,16 @@ function App(){
   }
 
 	return(
-			<Router>
-        <Header logOut={handleLogOut} />
-        <div style={errorStyle}>
-          {errorCode != null ? <p> {errorCode}</p> : null}
-          {errorMessage != null ? <p>{errorMessage}</p> : null}
-        </div>
-        <Routes> 
-				  {visibleBody}
-        </Routes>
-			</Router>
+    <div style={pageContainer}>
+      <Header logOut={handleLogOut} />
+      <div style={errorStyle}>
+        {errorCode != null ? <p> {errorCode}</p> : null}
+        {errorMessage != null ? <p>{errorMessage}</p> : null}
+      </div>
+      <Routes> 
+        {visibleBody}
+      </Routes>
+    </div>
 	)
 }
 

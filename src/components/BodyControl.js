@@ -4,7 +4,6 @@ import WaitLobby from './WaitLobby';
 import GameBoardControl from './GameBoardControl';
 import React, {useState, useEffect} from 'react';
 import PropTypes from "prop-types";
-import {v4} from 'uuid';
 import {nanoid} from 'nanoid';
 import { db } from '../firebase';
 import { 
@@ -63,7 +62,6 @@ function BodyControl(props){
 	const handleMakeRoom = async () => {
 		const room = {
 			playerList: [userPlayer],
-			id: v4(),
 			shareId: nanoid(6),
 			word: "",
 			turn: 1,
@@ -74,7 +72,7 @@ function BodyControl(props){
 			challengedPlayer: null
 		}
 		await addDoc(collection(db, "rooms"), room)
-		.then(handleAssignPlayer(userPlayer.id));
+		await handleAssignPlayer(userPlayer.userId);
 	}
 	
 	const handleJoinRoom = async () => {
@@ -85,7 +83,7 @@ function BodyControl(props){
 			const roomPlayerList = selectedRoom.playerList;
 			if (roomPlayerList.length < 7 && selectedRoom.playing != true){
 				roomPlayerList.concat(userPlayer);
-				const roomRef = doc(db, "rooms", selectedRoom.id);
+				const roomRef = doc(db, "Rooms", selectedRoom.id);
 				await updateDoc(roomRef, {
 					playerList: roomPlayerList
 				});
@@ -104,7 +102,7 @@ function BodyControl(props){
 	}
 	
 	const handleAssignPlayer = async (roomId) => {
-		const playerRef = doc(db, "players", userPlayer.id);
+		const playerRef = doc(db, "players", userPlayer.userId);
 		const updatePlayer = {
 			inRoom: true,
 			currentRoom: roomId
@@ -113,7 +111,7 @@ function BodyControl(props){
 	}
 
 	const handleRemoveRoomFromPlayer = async () => {
-		const playerRef = doc(db, "players", userPlayer.id);
+		const playerRef = doc(db, "players", userPlayer.userId);
 		const updatePlayer = {
 			inRoom: false,
 			currentRoom: null
@@ -126,7 +124,7 @@ function BodyControl(props){
 		const roomSnap = await getDoc(roomRef);
 		if (roomSnap.exists()) {
 			const thisRoom = roomSnap.data();
-			const newPlayerList = thisRoom.playerList.filter(player => player.id != playerId)[0];
+			const newPlayerList = thisRoom.playerList.filter(player => player.userId != playerId)[0];
 			await updateDoc(roomRef, {
 				playerList: newPlayerList
 			});
@@ -167,6 +165,7 @@ function BodyControl(props){
 		padding: '20px',
 		top: '30%',
 		left: '30%',
+		width: '50%',
 		display: 'flex',
 		flexDirection: 'row',
 		justifyContent: 'space-between'

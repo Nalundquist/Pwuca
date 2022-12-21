@@ -1,6 +1,5 @@
-import React, { useState } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
-import { useNavigate } from 'react-router-dom';
 
 function SignIn(props){
 	
@@ -52,8 +51,7 @@ function SignIn(props){
 					onChange={(e) => setUserPassword(e.target.value)}
 					placeholder="Input Password" />
 				<button 
-					onClick={onClickUserSignIn}
-					usenavigate="/">Sign In</button>
+					onClick={onClickUserSignIn}>Sign In</button>
 			</div>
 		</div>
 	)
