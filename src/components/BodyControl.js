@@ -25,45 +25,11 @@ function BodyControl(props){
 	const [roomError, setRoomError] = useState(null);
 	const [roomInput, setRoomInput] = useState(null);
 
-	useEffect(() => {
-		if (roomError) {
-			setTimeout(() => {
-				setRoomError(!roomError);
-			}, 3000)
-		}
-		if (userPlayer != null){
-			if (userPlayer.inRoom){
-				const docRef = doc(db, "Rooms", userPlayer.currentRoom)
-				const docSnap = getDoc(docRef)
-					.then(docSnap => {
-						if (docSnap.exists()) { 
-							setRoom(docSnap.data());
-						} else {
-							setRoom(null);
-							handleRemovePlayerFromRoom()
-						}
-					})
-			}
-		}
-		if (room){
-			const queryRoom = query(collection(db, 'Players'), where("id", "==", room.id));
-			const unSubscribe = onSnapshot(queryRoom, (docSnapshot) => {
-				const currentRoom = docSnapshot.data();
-				setRoom(currentRoom);
-			},
-			(error) => {
-				setRoomError('An error occurred while updating room from database');
-				console.log('double ruh roh (something bad updating room from firestore)')
-			})
-			return () => unSubscribe;
-		}
-	}, []);
-
 	const handleRoomInput = (event) => {
 		setRoomInput(event.target.value);
 	}
 
-const handleAddPlayerToRoom = (docRef) => {
+const handleAddPlayerToRoom = async (docRef) => {
 	const newUserPlayer = {
 		name: userPlayer.name,
 		pwuca: userPlayer.pwuca,
@@ -73,12 +39,21 @@ const handleAddPlayerToRoom = (docRef) => {
 		inRoom: true,
 		currentRoom: docRef.id
 	}
-	updateDoc(docRef, newUserPlayer);
-	
+	const newRoomPlayer = {
+		playerList: newUserPlayer
+	}
+	await updateDoc(docRef, newRoomPlayer);
+	return docRef;
 }
+
+	const handleSetRoom = async (docRef) => {
+		const doc = await getDoc(docRef);
+		setRoom(doc.data());
+		setRoomId(docRef.id)
+	}
 	
-	const handleMakeRoom = () => {
-		const newRoom = addDoc(collection(db, "Rooms"), {
+	const handleMakeRoom = async () => {
+		await addDoc(collection(db, "Rooms"), {
 			playerList: [],
 			shareId: nanoid(6),
 			word: "",
@@ -124,12 +99,13 @@ const handleAddPlayerToRoom = (docRef) => {
 	}
 	
 	const handleAssignPlayer = async (docRef) => {
-		const playerRef = doc((db, "Players"), userPlayerId);
+		const playerRef = doc(db, "Players", userPlayerId);
 		const updatePlayer = {
 			inRoom: true,
 			currentRoom: docRef.id
 		};
 		await updateDoc(playerRef, updatePlayer);
+		return docRef;
 	}
 
 	const handleRemoveRoomFromPlayer = async () => {

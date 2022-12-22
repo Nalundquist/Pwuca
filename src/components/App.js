@@ -52,14 +52,14 @@ function App(){
       inRoom: false,
       currentRoom: null
     }
-    const docRef = await addDoc(collection(db, "Players"), newPlayer)
+    const docRef = await addDoc(collection(db, "Players"), newPlayer);
+    console.log(docRef.id);
     setPlayerId(docRef.id);
     return newPlayer;
   }
 
   const handleSetPlayer = async (newPlayer) => {
     setPlayer(newPlayer);
-    setPlayerId(newPlayer.id)
     return "/";
   }
 
