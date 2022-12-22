@@ -11,6 +11,7 @@ import {
 	addDoc, 
 	updateDoc, 
 	getDoc,
+	getDocs,
 	query,
 	collection,
   where, 
@@ -18,8 +19,9 @@ import {
 
 function BodyControl(props){
 
-	const { userPlayer, userPlayerRef } = props;
+	const { userPlayer, userPlayerId } = props;
 	const [room, setRoom] = useState(null);
+	const [roomId, setRoomId] = useState("");
 	const [roomError, setRoomError] = useState(null);
 	const [roomInput, setRoomInput] = useState(null);
 
@@ -58,10 +60,24 @@ function BodyControl(props){
 	const handleRoomInput = (event) => {
 		setRoomInput(event.target.value);
 	}
+
+const handleAddPlayerToRoom = (docRef) => {
+	const newUserPlayer = {
+		name: userPlayer.name,
+		pwuca: userPlayer.pwuca,
+		turnOrder: userPlayer.turnOrder,
+		isTurn: false,
+		userId: userPlayer.userId,
+		inRoom: true,
+		currentRoom: docRef.id
+	}
+	updateDoc(docRef, newUserPlayer);
+	setUserPlayer(newUserPlayer);
+}
 	
-	const handleMakeRoom = async () => {
-		const room = {
-			playerList: [userPlayer],
+	const handleMakeRoom = () => {
+		const newRoom = addDoc(collection(db, "Rooms"), {
+			playerList: [],
 			shareId: nanoid(6),
 			word: "",
 			turn: 1,
@@ -70,14 +86,18 @@ function BodyControl(props){
 			challenge: 0,
 			challengingPlayer: null,
 			challengedPlayer: null
-		}
-		await addDoc(collection(db, "Rooms"), room)
-		await handleAssignPlayer(userPlayerRef);
+		})
+			.then((docRef) => 
+				handleAssignPlayer(docRef)
+					.then((docRef) => 
+						handleAddPlayerToRoom(docRef)
+					));
 	}
 	
 	const handleJoinRoom = async () => {
 		const queryRoom = query(collection(db, "Rooms"), where("shareId", "==", roomInput));
-		const roomSnap = await getDoc(queryRoom);
+		console.log(queryRoom);
+		const roomSnap = await getDocs(queryRoom);
 		if (roomSnap.exists()) {
 			const selectedRoom = roomSnap.data();
 			const roomPlayerList = selectedRoom.playerList;
@@ -87,7 +107,7 @@ function BodyControl(props){
 				await updateDoc(roomRef, {
 					playerList: roomPlayerList
 				});
-				handleAssignPlayer(selectedRoom.id)
+				handleAssignPlayer(roomRef)
 			} else if (selectedRoom.length >= 7){
 				setRoomError("That room is full")
 			} else if (selectedRoom.playing) {
@@ -101,17 +121,17 @@ function BodyControl(props){
 		setRoomInput(null);
 	}
 	
-	const handleAssignPlayer = async (roomId) => {
-		const playerRef = doc((db, "Players"), userPlayerRef);
+	const handleAssignPlayer = async (docRef) => {
+		const playerRef = doc(db, "Players", userPlayerId);
 		const updatePlayer = {
 			inRoom: true,
-			currentRoom: roomId
+			currentRoom: docRef.id
 		};
 		await updateDoc(playerRef, updatePlayer);
 	}
 
 	const handleRemoveRoomFromPlayer = async () => {
-		const playerRef = doc(db, "Players", userPlayerRef);
+		const playerRef = doc(db, "Players", userPlayerId);
 		const updatePlayer = {
 			inRoom: false,
 			currentRoom: null

@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import PropTypes from 'prop-types';
 import { auth } from './../firebase';
 
 function Header(props){
@@ -57,7 +58,7 @@ function Header(props){
 				<h2>PWUCA</h2>
 			</div>
 			<div style={userToolbarStyle}>
-			{user != null ? <h4>Hello, {auth.currentUser.displayName}</h4> : null}
+			{user != null && props.headerPlayer != null ? <h4>Hello, {props.headerPlayer.name}</h4> : null}
 				<ul>
 					<li>
 						<Link to="/">Home</Link>
@@ -69,4 +70,8 @@ function Header(props){
 	)
 }
 
+Header.propTypes = {
+	headerPlayer: PropTypes.object,
+	logout: PropTypes.func
+}
 export default Header;

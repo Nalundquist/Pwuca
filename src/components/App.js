@@ -19,13 +19,13 @@ import {
   updateProfile } from 'firebase/auth';
 import { 
   doc,
+  get,
   query,
   where,
   onSnapshot,
   addDoc,
   collection, 
-  getDoc,
-  updateDoc} from 'firebase/firestore';
+  getDocs } from 'firebase/firestore';
 
 
 function App(){
@@ -40,6 +40,7 @@ function App(){
 	const [user] = useAuthState(auth);
   const navigate = useNavigate();
 
+  
   const handleNewPlayer = (UserCredential) => {
     const newPlayer = addDoc(collection(db, "Players"), {
       name: name,
@@ -61,12 +62,14 @@ function App(){
   }
 
   const handleSetPlayer = async (newPlayer) => {
-    setPlayer(newPlayer);
+    setPlayer(newPlayer.data());
     return "/";
   }
 
   const handleSetPlayerId = async (player) => {
     setPlayerId(player.id);
+    console.log(player);
+    console.log(player.id);
     return player;
   }
   
@@ -92,18 +95,18 @@ function App(){
   };
 
   const handleSignInPlayer = async (id) => {
-    const queryPlayer = await query(collection(db, "Players"), where("userId", "==", id));
-    await getDoc(queryPlayer)
-      .then((doc) => 
-        handleSetPlayerId(doc)
-          .then((doc) => 
-            handleSetPlayer(doc)
-              .then((home) => 
-                navigate(home)
-              )
-          )
-      );
-  }
+    console.log(id)
+    const q = await query(collection(db, "Players"), where("userId", "==", id));
+    console.log(q)
+    const querySnapshot = await getDocs(q);
+    querySnapshot.forEach((doc) => {
+      handleSetPlayerId(doc)
+        .then((doc) => 
+          handleSetPlayer(doc)
+            .then((home) => 
+              navigate(home)
+              ))});
+  };
   
   const userSignIn = async (event) => {
     event.preventDefault();
@@ -188,7 +191,7 @@ function App(){
 
 	return(
     <div style={pageContainer}>
-      <Header logOut={handleLogOut} />
+      <Header logOut={handleLogOut} headerPlayer={player} />
       <div style={errorStyle}>
         {errorCode != null ? <p> {errorCode}</p> : null}
         {errorMessage != null ? <p>{errorMessage}</p> : null}
