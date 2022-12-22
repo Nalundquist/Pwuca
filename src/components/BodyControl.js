@@ -33,18 +33,20 @@ function BodyControl(props){
 		}
 		if (userPlayer != null){
 			if (userPlayer.inRoom){
-				const roomRef = doc(db, "Rooms", userPlayer.currentRoom);
-				const roomSnap = getDoc(roomRef);
-				if (roomSnap.exists()) { 
-					setRoom(roomSnap.data());
-				} else {
-					setRoom(null);
-					handleRemovePlayerFromRoom()
-				}
+				const docRef = doc(db, "Rooms", userPlayer.currentRoom)
+				const docSnap = getDoc(docRef)
+					.then(docSnap => {
+						if (docSnap.exists()) { 
+							setRoom(docSnap.data());
+						} else {
+							setRoom(null);
+							handleRemovePlayerFromRoom()
+						}
+					})
 			}
 		}
 		if (room){
-			const queryRoom = query(collection(db, 'players'), where("id", "==", room.id));
+			const queryRoom = query(collection(db, 'Players'), where("id", "==", room.id));
 			const unSubscribe = onSnapshot(queryRoom, (docSnapshot) => {
 				const currentRoom = docSnapshot.data();
 				setRoom(currentRoom);
@@ -72,7 +74,7 @@ const handleAddPlayerToRoom = (docRef) => {
 		currentRoom: docRef.id
 	}
 	updateDoc(docRef, newUserPlayer);
-	setUserPlayer(newUserPlayer);
+	
 }
 	
 	const handleMakeRoom = () => {
@@ -122,7 +124,7 @@ const handleAddPlayerToRoom = (docRef) => {
 	}
 	
 	const handleAssignPlayer = async (docRef) => {
-		const playerRef = doc(db, "Players", userPlayerId);
+		const playerRef = doc((db, "Players"), userPlayerId);
 		const updatePlayer = {
 			inRoom: true,
 			currentRoom: docRef.id

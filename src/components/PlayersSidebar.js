@@ -12,14 +12,15 @@ function PlayersSidebar(props){
 	return (
 		<React.Fragment>
 			<div style={sidebarStyle}>
-				{Array.from(players).map(player => {
+				{/* {Array.from(players).map(player => {
 					return(
 						<Player
 							name={player.name}
 							pwuca={player.pwuca}
 							key={player.id} />
 					)	
-				})}
+				})} */}
+				<p>players go here</p>
 			</div>
 		</React.Fragment>
 	)

@@ -16,7 +16,8 @@ import {
   signOut, 
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
-  updateProfile } from 'firebase/auth';
+  updateProfile, 
+  onAuthStateChanged} from 'firebase/auth';
 import { 
   doc,
   get,
@@ -25,6 +26,7 @@ import {
   onSnapshot,
   addDoc,
   collection, 
+  getDoc,
   getDocs } from 'firebase/firestore';
 
 
@@ -40,9 +42,8 @@ function App(){
 	const [user] = useAuthState(auth);
   const navigate = useNavigate();
 
-  
-  const handleNewPlayer = (UserCredential) => {
-    const newPlayer = addDoc(collection(db, "Players"), {
+  const handleNewPlayer = async (UserCredential) => {
+    const docRef = await addDoc(collection(db, "Players"), {
       name: name,
       pwuca: "",
       turnOrder: null,
@@ -51,18 +52,16 @@ function App(){
       inRoom: false,
       currentRoom: null
     })
-      .then((docRef) => {
-        console.log(docRef.id);
-        setPlayerId(docRef.id);
-      })
-    console.log(UserCredential);
-    console.log(newPlayer);
-    console.log(UserCredential);
+    const newPlayer = await getDoc(doc(db, "players", docRef.id));
     return newPlayer;
   }
 
   const handleSetPlayer = async (newPlayer) => {
-    setPlayer(newPlayer.data());
+    console.log(newPlayer);
+    console.log(newPlayer.data());
+    console.log(newPlayer.id)
+    setPlayer(newPlayer);
+    setPlayerId(newPlayer.id)
     return "/";
   }
 
