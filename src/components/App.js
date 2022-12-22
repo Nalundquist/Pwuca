@@ -43,7 +43,7 @@ function App(){
   const navigate = useNavigate();
 
   const handleNewPlayer = async (UserCredential) => {
-    const docRef = await addDoc(collection(db, "Players"), {
+    const newPlayer = {
       name: name,
       pwuca: "",
       turnOrder: null,
@@ -51,15 +51,13 @@ function App(){
       userId: UserCredential.user.uid,
       inRoom: false,
       currentRoom: null
-    })
-    const newPlayer = await getDoc(doc(db, "players", docRef.id));
+    }
+    const docRef = await addDoc(collection(db, "Players"), newPlayer)
+    setPlayerId(docRef.id);
     return newPlayer;
   }
 
   const handleSetPlayer = async (newPlayer) => {
-    console.log(newPlayer);
-    console.log(newPlayer.data());
-    console.log(newPlayer.id)
     setPlayer(newPlayer);
     setPlayerId(newPlayer.id)
     return "/";
@@ -101,7 +99,7 @@ function App(){
     querySnapshot.forEach((doc) => {
       handleSetPlayerId(doc)
         .then((doc) => 
-          handleSetPlayer(doc)
+          handleSetPlayer(doc.data())
             .then((home) => 
               navigate(home)
               ))});
