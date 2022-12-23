@@ -2,9 +2,9 @@ import NewRoom from './NewRoom';
 import JoinRoom from './JoinRoom';
 import WaitLobby from './WaitLobby';
 import GameBoardControl from './GameBoardControl';
-import React, {useState, useEffect} from 'react';
+import React, { useState, useEffect } from 'react';
 import PropTypes from "prop-types";
-import {nanoid} from 'nanoid';
+import { nanoid } from 'nanoid';
 import { auth, db } from '../firebase';
 import { 
 	doc,
@@ -14,22 +14,18 @@ import {
 	getDocs,
 	query,
 	collection,
-  where, 
-	onSnapshot} from 'firebase/firestore';
+  where } from 'firebase/firestore';
 
 function BodyControl(props){
 
-	const { userPlayer, userPlayerId } = props;
+	const { userPlayer, setUserPlayer ,userPlayerId } = props;
 	const [room, setRoom] = useState(null);
 	const [roomId, setRoomId] = useState("");
 	const [roomError, setRoomError] = useState(null);
 	const [roomInput, setRoomInput] = useState(null);
 
-	const handleRoomInput = (event) => {
-		setRoomInput(event.target.value);
-	}
-
-const handleAddPlayerToRoom = async (docRef) => {
+	
+	const handleAddPlayerToRoom = async (docRef) => {
 	const newUserPlayer = {
 		name: userPlayer.name,
 		pwuca: userPlayer.pwuca,
@@ -42,17 +38,17 @@ const handleAddPlayerToRoom = async (docRef) => {
 	const newRoomPlayer = {
 		playerList: newUserPlayer
 	}
-	await updateDoc(docRef, newRoomPlayer);
-	return docRef;
+	setUserPlayer(newUserPlayer);
+	await updateDoc(docRef, newRoomPlayer)
+	handleSetRoomId(docRef)
 }
 
-	const handleSetRoom = async (docRef) => {
-		const doc = await getDoc(docRef);
-		setRoom(doc.data());
-		setRoomId(docRef.id)
-	}
-	
-	const handleMakeRoom = async () => {
+
+const handleSetRoomId = (docRef) => {
+	setRoomId(docRef.id)
+}
+
+const handleMakeRoom = async () => {
 		await addDoc(collection(db, "Rooms"), {
 			playerList: [],
 			shareId: nanoid(6),
@@ -64,13 +60,18 @@ const handleAddPlayerToRoom = async (docRef) => {
 			challengingPlayer: null,
 			challengedPlayer: null
 		})
-			.then((docRef) => 
-				handleAssignPlayer(docRef)
-					.then((docRef) => 
-						handleAddPlayerToRoom(docRef)
-					));
+		.then((docRef) => 
+		handleAssignPlayer(docRef)
+		.then((docRef) => 
+		handleAddPlayerToRoom(docRef)
+		));
+		console.log(roomId)
 	}
 	
+	const handleRoomInput = (event) => {
+		setRoomInput(event.target.value);
+	}
+
 	const handleJoinRoom = async () => {
 		const queryRoom = query(collection(db, "Rooms"), where("shareId", "==", roomInput));
 		console.log(queryRoom);

@@ -15,18 +15,12 @@ import { Link,
 import { 
   signOut, 
   createUserWithEmailAndPassword,
-  signInWithEmailAndPassword,
-  updateProfile, 
-  onAuthStateChanged} from 'firebase/auth';
+  signInWithEmailAndPassword, } from 'firebase/auth';
 import { 
-  doc,
-  get,
   query,
   where,
-  onSnapshot,
   addDoc,
   collection, 
-  getDoc,
   getDocs } from 'firebase/firestore';
 
 
@@ -53,7 +47,6 @@ function App(){
       currentRoom: null
     }
     const docRef = await addDoc(collection(db, "Players"), newPlayer);
-    console.log(docRef.id);
     setPlayerId(docRef.id);
     return newPlayer;
   }
@@ -65,8 +58,6 @@ function App(){
 
   const handleSetPlayerId = async (player) => {
     setPlayerId(player.id);
-    console.log(player);
-    console.log(player.id);
     return player;
   }
   
@@ -92,9 +83,7 @@ function App(){
   };
 
   const handleSignInPlayer = async (id) => {
-    console.log(id)
     const q = await query(collection(db, "Players"), where("userId", "==", id));
-    console.log(q)
     const querySnapshot = await getDocs(q);
     querySnapshot.forEach((doc) => {
       handleSetPlayerId(doc)
@@ -180,7 +169,11 @@ function App(){
   } else {
     visibleBody =
     <React.Fragment>
-      <Route path="/" element={<BodyControl userPlayer={player} userPlayerId={playerId}/>} />
+      <Route path="/" element={
+        <BodyControl 
+          userPlayer={player}
+          userPlayerId={playerId}
+          setUserPlayer={setPlayer} />} />
       <Route path="/user-cp" element={<UserCP />} />
     </React.Fragment>
       
